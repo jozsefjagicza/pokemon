@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2E81AD7C2D82473C00554D09 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7B2D82473C00554D09 /* Stinsen */; };
+		2E81AD7E2D82473C00554D09 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7D2D82473C00554D09 /* Swinject */; };
+		2E81AD802D82473C00554D09 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7F2D82473C00554D09 /* Lottie */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2E81ACFD2D81B22E00554D09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E81AD7C2D82473C00554D09 /* Stinsen in Frameworks */,
+				2E81AD7E2D82473C00554D09 /* Swinject in Frameworks */,
+				2E81AD802D82473C00554D09 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,7 @@
 				2E81ACEB2D81B22C00554D09 /* Pokemon */,
 				2E81ACFF2D81B22E00554D09 /* PokemonTests */,
 				2E81AD092D81B22E00554D09 /* PokemonUITests */,
+				2E81AD7A2D82473C00554D09 /* Frameworks */,
 				2E81ACEA2D81B22C00554D09 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +100,13 @@
 				2E81AD062D81B22E00554D09 /* PokemonUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2E81AD7A2D82473C00554D09 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,12 +123,18 @@
 			buildRules = (
 			);
 			dependencies = (
+				2E81AD672D82440C00554D09 /* PBXTargetDependency */,
+				2E81AD512D823C2400554D09 /* PBXTargetDependency */,
+				2E81AD532D823C2400554D09 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2E81ACEB2D81B22C00554D09 /* Pokemon */,
 			);
 			name = Pokemon;
 			packageProductDependencies = (
+				2E81AD7B2D82473C00554D09 /* Stinsen */,
+				2E81AD7D2D82473C00554D09 /* Swinject */,
+				2E81AD7F2D82473C00554D09 /* Lottie */,
 			);
 			productName = Pokemon;
 			productReference = 2E81ACE92D81B22C00554D09 /* Pokemon.app */;
@@ -195,6 +218,11 @@
 			);
 			mainGroup = 2E81ACE02D81B22C00554D09;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2E81AD472D823A9C00554D09 /* XCRemoteSwiftPackageReference "stinsen" */,
+				2E81AD4B2D823B6100554D09 /* XCRemoteSwiftPackageReference "Swinject" */,
+				2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2E81ACEA2D81B22C00554D09 /* Products */;
 			projectDirPath = "";
@@ -265,6 +293,18 @@
 			isa = PBXTargetDependency;
 			target = 2E81ACE82D81B22C00554D09 /* Pokemon */;
 			targetProxy = 2E81AD072D81B22E00554D09 /* PBXContainerItemProxy */;
+		};
+		2E81AD512D823C2400554D09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2E81AD502D823C2400554D09 /* Stinsen */;
+		};
+		2E81AD532D823C2400554D09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2E81AD522D823C2400554D09 /* Swinject */;
+		};
+		2E81AD672D82440C00554D09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2E81AD662D82440C00554D09 /* Lottie */;
 		};
 /* End PBXTargetDependency section */
 
@@ -583,6 +623,66 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2E81AD472D823A9C00554D09 /* XCRemoteSwiftPackageReference "stinsen" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rundfunk47/stinsen";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.13;
+			};
+		};
+		2E81AD4B2D823B6100554D09 /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.1;
+			};
+		};
+		2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2E81AD502D823C2400554D09 /* Stinsen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD472D823A9C00554D09 /* XCRemoteSwiftPackageReference "stinsen" */;
+			productName = Stinsen;
+		};
+		2E81AD522D823C2400554D09 /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD4B2D823B6100554D09 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		2E81AD662D82440C00554D09 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		2E81AD7B2D82473C00554D09 /* Stinsen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD472D823A9C00554D09 /* XCRemoteSwiftPackageReference "stinsen" */;
+			productName = Stinsen;
+		};
+		2E81AD7D2D82473C00554D09 /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD4B2D823B6100554D09 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		2E81AD7F2D82473C00554D09 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2E81ACE12D81B22C00554D09 /* Project object */;
 }
