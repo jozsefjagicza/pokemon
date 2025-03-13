@@ -8,9 +8,29 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @StateObject private var viewModel = HomeViewModel()
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+            NavigationView {
+                List {
+                    ForEach(viewModel.pokemons, id: \.id) { pokemon in
+                        Text(pokemon.name.capitalized)
+                            .onAppear {
+                                if pokemon.id == viewModel.pokemons.last?.id {
+                                    viewModel.fetchPokemons()
+                                }
+                            }
+                    }
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    }
+                }
+                .navigationTitle("Pokémon List")
+            }
+        }
 }
 
 #Preview {

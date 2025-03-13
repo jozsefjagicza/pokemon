@@ -40,6 +40,11 @@ public final class AppContainer {
             LoginInteractor()
         }
         .inObjectScope(.container)
+        
+        container.register(HomeInteractorProtocol.self) { _ in
+            HomeInteractor()
+        }
+        .inObjectScope(.container)
     }
 }
 
