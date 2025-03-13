@@ -15,8 +15,7 @@ protocol SessionManagerType {
     func logout()
     func updateState()
     func storeLogInData(
-        accessToken: String,
-        refreshToken: String
+        accessToken: String
     )
     func getDeviceId() -> String?
     func getDeviceModel() -> String
@@ -39,7 +38,7 @@ class SessionManager: SessionManagerType {
     }
     
     func isLoggedIn() -> Bool {
-        return settingsManager.accessToken != nil && settingsManager.refreshToken != nil
+        return settingsManager.accessToken != nil
     }
     
     func logout() {
@@ -51,17 +50,11 @@ class SessionManager: SessionManagerType {
     func getAccessToken() -> String? {
         settingsManager.accessToken
     }
-
-    func getRefreshToken() -> String? {
-        settingsManager.refreshToken
-    }
     
     func storeLogInData(
-        accessToken: String,
-        refreshToken: String
+        accessToken: String
     ) {
         settingsManager.accessToken = accessToken
-        settingsManager.refreshToken = refreshToken
     }
     
     func getDeviceId() -> String? {

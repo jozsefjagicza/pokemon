@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Combine
 
 class LoginViewModel: ObservableObject {
+    
+    @Injected private var sessionManager: SessionManagerType
+    @Injected var interactor: LoginInteractorProtocol
+
     @Published var email: String = "" {
         didSet { onEmailChange() }
     }
@@ -20,6 +25,8 @@ class LoginViewModel: ObservableObject {
     @Published var errorPasswordMessage: String? = nil
     @Published var errorAlertMessage: String? = nil
     
+    private var cancellables = Set<AnyCancellable>()
+
     func login() {
         guard !email.isEmpty else {
             errorEmailMessage = "Az e-mail mezőt ki kell tölteni!"
@@ -38,15 +45,34 @@ class LoginViewModel: ObservableObject {
         
         isLoading = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.isLoading = false
-            if self.email == "user@example.com" && self.password == "password" {
-                print("Sikeres bejelentkezés!")
-            } else {
-                self.errorAlert = true
-                self.errorAlertMessage = "Hibás email vagy jelszó"
-            }
-        }
+        let request = LoginRequest(
+            email: email,
+            password: password,
+            deviceId: sessionManager.getDeviceId() ?? "",
+            appVersion: Config.version,
+            phoneOsVersion: Config.osVersion,
+            phoneType: sessionManager.getDeviceModel()
+        )
+        
+        interactor.login(request: request)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
+                self.isLoading = false
+                
+                if case .failure(let error) = completion {
+                    self.errorAlertMessage = error.localizedDescription
+                    self.errorAlert = true
+                }
+            }, receiveValue: { [weak self] response in
+                guard let self = self else { return }
+                
+                self.sessionManager.storeLogInData(
+                    accessToken: response.accessToken
+                )
+                self.sessionManager.updateState()
+            })
+            .store(in: &cancellables)
     }
     
     func validateEmail(email: String) -> Bool {

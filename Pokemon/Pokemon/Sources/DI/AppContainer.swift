@@ -35,6 +35,11 @@ public final class AppContainer {
             SettingsManager.shared
         }
         .inObjectScope(.container)
+        
+        container.register(LoginInteractorProtocol.self) { _ in
+            LoginInteractor()
+        }
+        .inObjectScope(.container)
     }
 }
 

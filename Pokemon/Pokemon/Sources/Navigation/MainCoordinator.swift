@@ -13,6 +13,7 @@ import Stinsen
 protocol MainCoordinatorProtocol {
     
     func makeUnauthenticated() -> NavigationViewCoordinator<LoginCoordinator>
+    func makeAuthenticated() -> NavigationViewCoordinator<HomeCoordinator>
 
 }
 
@@ -24,12 +25,23 @@ final class MainCoordinator: NavigationCoordinatable, MainCoordinatorProtocol {
     @Injected var sessionManager: SessionManagerType
     
     @Root var unauthenticated = makeUnauthenticated
+    @Root var authenticated = makeAuthenticated
+
     @Root var splash = makeSplash
     
+    var homeCoordinator: HomeCoordinator?
+
     func makeUnauthenticated() -> NavigationViewCoordinator<LoginCoordinator> {
         let loginCoordinator = LoginCoordinator()
         return NavigationViewCoordinator(loginCoordinator)
     }
+    
+    func makeAuthenticated() -> NavigationViewCoordinator<HomeCoordinator> {
+        if homeCoordinator == nil {
+            homeCoordinator = HomeCoordinator()
+            }
+        return NavigationViewCoordinator(homeCoordinator!)
+        }
     
     func makeSplash() -> some View {
         LaunchView()
@@ -43,7 +55,7 @@ final class MainCoordinator: NavigationCoordinatable, MainCoordinatorProtocol {
             } receiveValue: { [weak self] status in
                 switch status {
                 case .loggedIn:
-                    self?.root(\.unauthenticated)
+                    self?.root(\.authenticated)
                 case .loggedOut:
                     self?.root(\.unauthenticated)
                 }
