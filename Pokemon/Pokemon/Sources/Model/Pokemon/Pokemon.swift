@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 struct PokemonResponse: Decodable {
     let count: Int
@@ -38,33 +37,4 @@ struct Pokemon: Identifiable, Decodable {
     }
 }
 
-// Core Data Entity
-extension Pokemon {
-    func toEntity(context: NSManagedObjectContext) -> PokemonEntity {
-        let entity = PokemonEntity(context: context)
-        entity.id = Int64(id)
-        entity.name = name
-        entity.url = url
-        return entity
-    }
-}
-
-extension Pokemon {
-    static func fromEntity(_ entity: PokemonEntity) -> Pokemon {
-        return Pokemon(id: Int(entity.id), name: entity.name ?? "", url: entity.url ?? "")
-    }
-}
-
-@objc(PokemonEntity)
-public class PokemonEntity: NSManagedObject {}
-
-extension PokemonEntity {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<PokemonEntity> {
-        return NSFetchRequest<PokemonEntity>(entityName: "PokemonEntity")
-    }
-    
-    @NSManaged public var id: Int64
-    @NSManaged public var name: String?
-    @NSManaged public var url: String?
-}
 

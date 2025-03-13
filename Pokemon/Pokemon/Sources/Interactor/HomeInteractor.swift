@@ -20,7 +20,6 @@ class HomeInteractor: HomeInteractorProtocol {
     }
     
     func fetchPokemons(from urlString: String) -> AnyPublisher<PokemonResponse, Error> {
-        print("URL: \(urlString)")
         guard let url = URL(string: urlString) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
