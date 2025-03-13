@@ -7,26 +7,67 @@
 
 import Foundation
 import Combine
+import SwiftData
 
 protocol HomeInteractorProtocol {
-    func loadNextPageURL() -> String
-    func fetchPokemons(from urlString: String) -> AnyPublisher<PokemonResponse, Error>
+    func fetchPokemons() -> AnyPublisher<[Pokemon], Error>
 }
 
 class HomeInteractor: HomeInteractorProtocol {
-   
-    func loadNextPageURL() -> String {
-        return UserDefaults.standard.string(forKey: "nextPageURL") ?? "https://pokeapi.co/api/v2/pokemon/"
-    }
+
+    var nextPageURL: String = "https://pokeapi.co/api/v2/pokemon/"
     
-    func fetchPokemons(from urlString: String) -> AnyPublisher<PokemonResponse, Error> {
-        guard let url = URL(string: urlString) else {
+    func fetchPokemons() -> AnyPublisher<[Pokemon], Error> {
+        guard let url = URL(string: nextPageURL) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
+        
+        if !isConnectedToInternet() {
+            return Fail(error: URLError(.notConnectedToInternet)).eraseToAnyPublisher()
+        }
+        
         return URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: PokemonResponse.self, decoder: JSONDecoder())
-            .eraseToAnyPublisher()
+                    .map { $0.data }
+                    .decode(type: PokemonResponse.self, decoder: JSONDecoder())
+                    .map { response in
+                        let pokemons = response.results.map { Pokemon(from: $0) }
+                        self.nextPageURL = response.next ?? ""
+                        Task {
+                            await self.savePokemonsToDatabase(pokemons)
+                        }
+                        return pokemons
+                    }
+                    .eraseToAnyPublisher()
+    }
+    
+    @MainActor
+    private func savePokemonsToDatabase(_ pokemons: [Pokemon]) {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: Pokemon.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return
+        }
+        
+        let context = container.mainContext
+        
+        for pokemon in pokemons {
+            let pokemonEntity = Pokemon(id: pokemon.id, name: pokemon.name, url: pokemon.url)
+            context.insert(pokemonEntity)
+        }
+        
+        do {
+            try context.save()
+        } catch {
+            print("Hiba a mentés során: \(error)")
+        }
+    }
+
+    private func isConnectedToInternet() -> Bool {
+
+        return true
     }
 }
+
 
