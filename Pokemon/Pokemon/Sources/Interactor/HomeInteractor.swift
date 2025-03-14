@@ -8,13 +8,14 @@
 import Foundation
 import Combine
 import SwiftData
+import Alamofire
 
 protocol HomeInteractorProtocol {
     func fetchPokemons() -> AnyPublisher<[Pokemon], Error>
 }
 
 class HomeInteractor: HomeInteractorProtocol {
-
+    
     var nextPageURL: String = "https://pokeapi.co/api/v2/pokemon/"
     
     func fetchPokemons() -> AnyPublisher<[Pokemon], Error> {
@@ -26,18 +27,22 @@ class HomeInteractor: HomeInteractorProtocol {
             return Fail(error: URLError(.notConnectedToInternet)).eraseToAnyPublisher()
         }
         
-        return URLSession.shared.dataTaskPublisher(for: url)
-                    .map { $0.data }
-                    .decode(type: PokemonResponse.self, decoder: JSONDecoder())
-                    .map { response in
-                        let pokemons = response.results.map { Pokemon(from: $0) }
-                        self.nextPageURL = response.next ?? ""
-                        Task {
-                            await self.savePokemonsToDatabase(pokemons)
-                        }
-                        return pokemons
-                    }
-                    .eraseToAnyPublisher()
+        return AF.request(url)
+            .publishDecodable(type: PokemonResponse.self)
+            .tryMap { response in
+                guard let value = response.value else {
+                    throw response.error ?? URLError(.badServerResponse)
+                }
+                let pokemons = value.results.map { Pokemon(from: $0) }
+                self.nextPageURL = value.next ?? ""
+                
+                Task {
+                    await self.savePokemonsToDatabase(pokemons)
+                }
+                
+                return pokemons
+            }
+            .eraseToAnyPublisher()
     }
     
     @MainActor
@@ -63,9 +68,9 @@ class HomeInteractor: HomeInteractorProtocol {
             print("Hiba a mentés során: \(error)")
         }
     }
-
+    
     private func isConnectedToInternet() -> Bool {
-
+        
         return true
     }
 }

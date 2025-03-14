@@ -10,6 +10,7 @@
 		2E81AD7C2D82473C00554D09 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7B2D82473C00554D09 /* Stinsen */; };
 		2E81AD7E2D82473C00554D09 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7D2D82473C00554D09 /* Swinject */; };
 		2E81AD802D82473C00554D09 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AD7F2D82473C00554D09 /* Lottie */; };
+		2E81AECA2D84169500554D09 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 2E81AEC92D84169500554D09 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E81AD7C2D82473C00554D09 /* Stinsen in Frameworks */,
+				2E81AECA2D84169500554D09 /* Alamofire in Frameworks */,
 				2E81AD7E2D82473C00554D09 /* Swinject in Frameworks */,
 				2E81AD802D82473C00554D09 /* Lottie in Frameworks */,
 			);
@@ -123,6 +125,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2E81AEC82D84166300554D09 /* PBXTargetDependency */,
 				2E81AD672D82440C00554D09 /* PBXTargetDependency */,
 				2E81AD512D823C2400554D09 /* PBXTargetDependency */,
 				2E81AD532D823C2400554D09 /* PBXTargetDependency */,
@@ -135,6 +138,7 @@
 				2E81AD7B2D82473C00554D09 /* Stinsen */,
 				2E81AD7D2D82473C00554D09 /* Swinject */,
 				2E81AD7F2D82473C00554D09 /* Lottie */,
+				2E81AEC92D84169500554D09 /* Alamofire */,
 			);
 			productName = Pokemon;
 			productReference = 2E81ACE92D81B22C00554D09 /* Pokemon.app */;
@@ -222,6 +226,7 @@
 				2E81AD472D823A9C00554D09 /* XCRemoteSwiftPackageReference "stinsen" */,
 				2E81AD4B2D823B6100554D09 /* XCRemoteSwiftPackageReference "Swinject" */,
 				2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				2E81AE5F2D84160400554D09 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2E81ACEA2D81B22C00554D09 /* Products */;
@@ -305,6 +310,10 @@
 		2E81AD672D82440C00554D09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 2E81AD662D82440C00554D09 /* Lottie */;
+		};
+		2E81AEC82D84166300554D09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2E81AEC72D84166300554D09 /* Alamofire */;
 		};
 /* End PBXTargetDependency section */
 
@@ -649,6 +658,14 @@
 				minimumVersion = 4.5.1;
 			};
 		};
+		2E81AE5F2D84160400554D09 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -681,6 +698,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2E81AD652D82433300554D09 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		2E81AEC72D84166300554D09 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AE5F2D84160400554D09 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		2E81AEC92D84169500554D09 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E81AE5F2D84160400554D09 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
