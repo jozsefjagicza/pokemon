@@ -16,6 +16,7 @@ class HomeViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     @Injected var interactor: HomeInteractorProtocol
+    @Injected var homeCoordinator: HomeCoordinatorProtocol
 
     init() {
         fetchPokemons()
@@ -39,6 +40,10 @@ class HomeViewModel: ObservableObject {
                 self.isLoading = false                
             })
             .store(in: &cancellables)
+    }
+    
+    func loadDetails(for pokemon: Pokemon) {
+        homeCoordinator.routeToDetails(pokemon: pokemon)
     }
 }
 

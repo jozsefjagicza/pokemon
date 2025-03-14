@@ -6,34 +6,41 @@
 //
 
 import SwiftUI
+import Stinsen
 
 struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
+    private var coordinator: HomeCoordinator
+
+    init(coordinator: HomeCoordinator) {
+        self.coordinator = coordinator
+    }
     
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(viewModel.pokemons, id: \.id) { pokemon in
+        NavigationStack {
+        List {
+            ForEach(viewModel.pokemons, id: \.id) { pokemon in
+                Button {
+                    coordinator.routeToDetails(pokemon: pokemon)
+                } label: {
                     Text(pokemon.name.capitalized)
-                        .onAppear {
-                            if pokemon.id == viewModel.pokemons.last?.id {
-                                viewModel.fetchPokemons()
-                            }
-                        }
                 }
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                .buttonStyle(PlainButtonStyle())
+                .onAppear {
+                    if pokemon.id == viewModel.pokemons.last?.id {
+                        viewModel.fetchPokemons()
+                    }
                 }
             }
-            .navigationTitle("Pokémon List")
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
         }
     }
-}
-
-#Preview {
-    HomeView()
+            .navigationTitle("Pokémon List")
+    }
 }
 
