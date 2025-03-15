@@ -19,7 +19,7 @@ class HomeViewModel: ObservableObject {
     @Injected var homeCoordinator: HomeCoordinatorProtocol
 
     init() {
-        fetchPokemons()
+        self.fetchPokemons()
     }
     
     func fetchPokemons() {

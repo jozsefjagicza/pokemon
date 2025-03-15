@@ -13,6 +13,9 @@ import SwiftUI
 
 @MainActor
 class PokemonDetailsViewModel: ObservableObject {
+    
+    @Injected var homeCoordinator: HomeCoordinatorProtocol
+
     @Published var pokemonData: PokemonData?
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -77,6 +80,10 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.isLoading = false
             })
             .store(in: &cancellables)
+    }
+    
+    func backToHome() {
+        homeCoordinator.backToHome()
     }
     
     func convertToUIImage(_ image: Image) -> UIImage? {

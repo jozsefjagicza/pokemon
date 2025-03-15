@@ -47,6 +47,13 @@ final class MainCoordinator: NavigationCoordinatable, MainCoordinatorProtocol {
         LaunchView()
     }
     
+    func getHomeCoordinator() -> HomeCoordinatorProtocol {
+            if homeCoordinator == nil {
+                homeCoordinator = HomeCoordinator()
+            }
+            return homeCoordinator!
+        }
+    
     init() {
         cancellables = Set<AnyCancellable>()
         sessionManager.stateSubject

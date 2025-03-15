@@ -25,7 +25,7 @@ final class HomeCoordinator: NavigationCoordinatable, HomeCoordinatorProtocol {
     }
 
     func makeHome() -> some View {
-        HomeView(coordinator: self)
+        HomeView()
     }
 
     func makeDetails(pokemon: Pokemon) -> some View {
