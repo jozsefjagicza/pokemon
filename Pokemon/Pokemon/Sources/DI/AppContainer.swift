@@ -51,6 +51,11 @@ public final class AppContainer {
             HomeInteractor()
         }
         .inObjectScope(.container)
+        
+        container.register(PokemonInteractorProtocol.self) { _ in
+            PokemonInteractor()
+        }
+        .inObjectScope(.container)
     }
 }
 
