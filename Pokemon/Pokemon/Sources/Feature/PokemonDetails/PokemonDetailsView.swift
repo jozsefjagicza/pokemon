@@ -15,6 +15,8 @@ struct PokemonDetailsView: View {
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
     
+    @State private var isFavorite: Bool = false
+    
     init(pokemon: Pokemon) {
         _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemon: pokemon))
     }
@@ -46,6 +48,19 @@ struct PokemonDetailsView: View {
                                 }
                         } placeholder: {
                             ProgressView()
+                        }
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Button(action: {
+                                isFavorite.toggle()
+                            }) {
+                                Image(systemName: isFavorite ? "star.fill" : "star")
+                                    .font(.title)
+                                    .foregroundColor(.red)
+                            }
+                            .padding()
                         }
                         
                         Text(pokemon.name.capitalized)
