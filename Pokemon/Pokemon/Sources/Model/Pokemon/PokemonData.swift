@@ -48,11 +48,15 @@ struct PokemonAbility: Codable {
 struct PokemonSprites: Codable {
     let frontDefault: String?
     let frontShiny: String?
+    let backDefault: String?
+    let backShiny: String?
     let other: PokemonOtherSprites
     
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
         case frontShiny = "front_shiny"
+        case backDefault = "back_default"
+        case backShiny = "back_shiny"
         case other
     }
 }
@@ -143,7 +147,6 @@ struct PokemonSpeciesData: Codable {
     }
     
     struct Name: Codable {
-        var uuid: String = UUID().uuidString
         let name: String
         let language: NamedAPIResource
     }
@@ -180,7 +183,7 @@ struct PokemonSpeciesData: Codable {
     let name: String
     let names: [Name]
     let varieties: [Variety]
-    
+
     enum CodingKeys: String, CodingKey {
         case baseHappiness = "base_happiness"
         case captureRate = "capture_rate"

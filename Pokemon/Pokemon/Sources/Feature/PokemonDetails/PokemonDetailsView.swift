@@ -23,7 +23,7 @@ struct PokemonDetailsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 if let pokemon = viewModel.pokemonData {
-                    AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork.frontDefault ?? "")) { image in
+                    AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork.frontShiny ?? "")) { image in
                         image.resizable().scaledToFit()
                             .onTapGesture {
                                 if let uiImage = viewModel.convertToUIImage(image) {
@@ -43,16 +43,16 @@ struct PokemonDetailsView: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     
+                    Text("Height: \(pokemon.height) dm")
+                    Text("Base XP: \(pokemon.baseExperience)")
+                    
                     VStack(alignment: .leading) {
                         Text("Alternative Names:")
                             .font(.headline)
-                        ForEach(pokemon.speciesData?.names ?? [], id: \.uuid) { name in
+                        ForEach(pokemon.speciesData?.names ?? [], id: \.name) { name in
                             Text("\(name.name.capitalized) (\(name.language.name?.capitalized ?? ""))")
                         }
                     }
-                    
-                    Text("Height: \(pokemon.height) dm")
-                    Text("Base XP: \(pokemon.baseExperience)")
                     
                     VStack(alignment: .leading) {
                         Text("Basic Information:")
@@ -119,20 +119,42 @@ struct PokemonDetailsView: View {
                             }
                         }
                     }
-                    
-                    AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork.frontShiny ?? "")) { image in
-                        image.resizable().scaledToFit()
-                    } placeholder: {
-                        ProgressView()
+                    GeometryReader { geometry in
+                        HStack {
+                            AsyncImage(url: URL(string: pokemon.sprites.frontDefault ?? "")) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: geometry.size.width / 4)
+                            AsyncImage(url: URL(string: pokemon.sprites.frontShiny ?? "")) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: geometry.size.width / 4)
+                            AsyncImage(url: URL(string: pokemon.sprites.backDefault ?? "")) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: geometry.size.width / 4)
+                            AsyncImage(url: URL(string: pokemon.sprites.backShiny ?? "")) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: geometry.size.width / 4)
+                        }
                     }
-                    .frame(height: 200)
                 } else if viewModel.isLoading {
                     ProgressView()
                 } else {
                     Text("Failed to load details")
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 60)
             .onAppear {
                 viewModel.fetchDetails()
             }
