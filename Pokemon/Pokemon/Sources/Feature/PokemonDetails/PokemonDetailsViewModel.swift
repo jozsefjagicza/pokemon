@@ -14,12 +14,12 @@ import SwiftUI
 @MainActor
 class PokemonDetailsViewModel: ObservableObject {
     @Injected var homeCoordinator: HomeCoordinatorProtocol
-    @Published var pokemonData: PokemonData?
+    @Published var pokemonData: PokemonDataDTO?
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     @Injected var interactor: PokemonInteractorProtocol
-
+    
     private var cancellables = Set<AnyCancellable>()
     private let pokemon: Pokemon
     
@@ -29,6 +29,10 @@ class PokemonDetailsViewModel: ObservableObject {
     
     func fetchDetails() {
         isLoading = true
+        //self.pokemonData = interactor.fetchPokemonDataByName(pokemon.name)
+        //isLoading = false
+
+        
         interactor.fetchPokemonDetails(for: pokemon.name)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
@@ -44,6 +48,7 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.fetchSpeciesDetails(from: data.species.url)
             })
             .store(in: &cancellables)
+         
     }
     
     private func fetchSpeciesDetails(from urlString: String) {
@@ -59,6 +64,11 @@ class PokemonDetailsViewModel: ObservableObject {
             }, receiveValue: { speciesData in
                 self.pokemonData?.speciesData = speciesData
                 self.isLoading = false
+                if self.pokemonData != nil {
+                    Task {
+                        await self.interactor.savePokemonDataToDatabase(PokemonData(from: self.pokemonData!))
+                    }
+                }
             })
             .store(in: &cancellables)
     }

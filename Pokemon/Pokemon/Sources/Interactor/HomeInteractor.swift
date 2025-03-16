@@ -37,7 +37,7 @@ class HomeInteractor: HomeInteractorProtocol {
                 self.nextPageURL = value.next ?? ""
                 
                 Task {
-                    await self.savePokemonsToDatabase(pokemons)
+                    //await self.savePokemonsToDatabase(pokemons)
                 }
                 
                 return pokemons
@@ -54,6 +54,7 @@ class HomeInteractor: HomeInteractorProtocol {
             print("Nem sikerült betölteni a ModelContainer-t: \(error)")
             return
         }
+        
         
         let context = container.mainContext
         

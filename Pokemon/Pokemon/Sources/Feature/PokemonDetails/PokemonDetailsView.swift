@@ -38,7 +38,7 @@ struct PokemonDetailsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let pokemon = viewModel.pokemonData {
-                        AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork.frontShiny ?? "")) { image in
+                        AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork?.frontDefault ?? "")) { image in
                             image.resizable().scaledToFit()
                                 .onTapGesture {
                                     if let uiImage = viewModel.convertToUIImage(image) {
@@ -49,7 +49,6 @@ struct PokemonDetailsView: View {
                         } placeholder: {
                             ProgressView()
                         }
-                        
                         HStack {
                             Spacer()
                             
@@ -81,7 +80,7 @@ struct PokemonDetailsView: View {
                                 Text("\(name.name.capitalized) (\(name.language.name?.capitalized ?? ""))")
                             }
                         }
-                        
+                    
                         VStack(alignment: .leading) {
                             Text("Basic Information:")
                                 .font(.headline)
@@ -89,7 +88,7 @@ struct PokemonDetailsView: View {
                             Text("Generation: \(pokemon.speciesData?.generation.name?.capitalized ?? "")")
                             Text("Color: \(pokemon.speciesData?.color.name?.capitalized ?? "")")
                         }
-                        
+                    
                         VStack(alignment: .leading) {
                             Text("Breeding Information:")
                                 .font(.headline)
@@ -110,16 +109,13 @@ struct PokemonDetailsView: View {
                                 .font(.headline)
                             Text("Capture Rate: \(pokemon.speciesData?.captureRate ?? 0)")
                             Text("Evolves from: \(pokemon.speciesData?.evolvesFromSpecies?.name?.capitalized ?? "None")")
-                            if let evolutionChain = pokemon.speciesData?.evolutionChain.url {
-                                Link("Evolution Chain", destination: URL(string: evolutionChain)!)
-                            }
                         }
                         
                         VStack(alignment: .leading) {
                             Text("Abilities:")
                                 .font(.headline)
-                            ForEach(pokemon.abilities, id: \..ability.name) { ability in
-                                Text("- \(ability.ability.name.capitalized)")
+                            ForEach(pokemon.abilities, id: \.ability.name) { ability in
+                                Text("- \(ability.ability.name?.capitalized ?? "")")
                             }
                         }
                         
@@ -132,21 +128,11 @@ struct PokemonDetailsView: View {
                         VStack(alignment: .leading) {
                             Text("Flavor Texts:")
                                 .font(.headline)
-                            ForEach(pokemon.speciesData?.flavorTextEntries ?? [], id: \.version.name) { text in
+                            ForEach(pokemon.speciesData?.flavorTextEntries ?? [], id: \.self) { text in
                                 Text(text.flavorText)
                             }
                         }
-                        
-                        VStack(alignment: .leading) {
-                            Text("Appeared in Games:")
-                                .font(.headline)
-                            ForEach(pokemon.gameIndices, id: \.uuid) { game in
-                                HStack {
-                                    Text("\(game.version.name.capitalized)")
-                                    Text("Game index: \(game.gameIndex ?? 0)")
-                                }
-                            }
-                        }
+
                         GeometryReader { geometry in
                             HStack {
                                 AsyncImage(url: URL(string: pokemon.sprites.frontDefault ?? "")) { image in

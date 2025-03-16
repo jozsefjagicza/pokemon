@@ -6,20 +6,20 @@
 //
 
 import Foundation
+import SwiftData
 
-struct PokemonData: Codable {
-    let id: Int
-    let name: String
-    let height: Int
-    let baseExperience: Int
-    let order: Int
-    let abilities: [PokemonAbility]
-    let sprites: PokemonSprites
-    let species: PokemonSpecies
-    var speciesData: PokemonSpeciesData?
-    let cries: PokemonCries
-    let gameIndices: [PokemonGameIndices]
-    
+@Model
+class PokemonData {
+    @Attribute var id: Int
+    @Attribute var name: String
+    @Attribute var height: Int
+    @Attribute var baseExperience: Int
+    @Attribute var order: Int
+    @Attribute var abilities: [PokemonAbility]
+    @Attribute var sprites: PokemonSprites
+    @Attribute var species: PokemonSpecies
+    @Attribute var speciesData: PokemonSpeciesData?
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -30,27 +30,82 @@ struct PokemonData: Codable {
         case sprites
         case species
         case speciesData
-        case cries
-        case gameIndices = "game_indices"
+
+    }
+    
+    init(id: Int,
+         name: String,
+         height: Int,
+         baseExperience: Int,
+         order: Int,
+         abilities: [PokemonAbility],
+         sprites: PokemonSprites,
+         species: PokemonSpecies,
+         speciesData: PokemonSpeciesData?) {
+        self.id = id
+        self.name = name
+        self.height = height
+        self.baseExperience = baseExperience
+        self.order = order
+        self.abilities = abilities
+        self.sprites = sprites
+        self.species = species
+        self.speciesData = speciesData
+    }
+    
+    convenience init(from dto: PokemonDataDTO) {
+        let sprites = PokemonSprites(from: dto.sprites)
+        let species = PokemonSpecies(from: dto.species)
+        
+        let speciesData = dto.speciesData != nil ? PokemonSpeciesData(from: dto.speciesData!) : nil
+
+        self.init(id: dto.id,
+                  name: dto.name,
+                  height: dto.height,
+                  baseExperience: dto.baseExperience,
+                  order: dto.order,
+                  abilities: dto.abilities.map { PokemonAbility(from: $0) },
+                  sprites: sprites,
+                  species: species,
+                  speciesData: speciesData)
     }
 }
 
-struct PokemonAbility: Codable {
-    let ability: NamedAPIResource
-    let isHidden: Bool
+@Model
+class PokemonAbility {
+    @Attribute var ability: NamedAPIResource
+    @Attribute var isHidden: Bool
     
     enum CodingKeys: String, CodingKey {
         case ability
         case isHidden = "is_hidden"
     }
+    
+    func toDTO() -> PokemonAbilityDTO {
+        return PokemonAbilityDTO(
+            ability: NamedAPIResourceDTO(name: ability.name ?? "", url: ability.url),
+            isHidden: isHidden
+        )
+    }
+    
+    init(ability: NamedAPIResource, isHidden: Bool) {
+        self.ability = ability
+        self.isHidden = isHidden
+    }
+    
+    convenience init(from dto: PokemonAbilityDTO) {
+        let abilityResource = NamedAPIResource(name: dto.ability.name ?? "", url: dto.ability.url ?? "")
+        self.init(ability: abilityResource, isHidden: dto.isHidden)
+    }
 }
 
-struct PokemonSprites: Codable {
-    let frontDefault: String?
-    let frontShiny: String?
-    let backDefault: String?
-    let backShiny: String?
-    let other: PokemonOtherSprites
+@Model
+class PokemonSprites {
+    @Attribute var frontDefault: String?
+    @Attribute var frontShiny: String?
+    @Attribute var backDefault: String?
+    @Attribute var backShiny: String?
+    @Attribute var other: PokemonSpritesOther?
     
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
@@ -59,131 +114,153 @@ struct PokemonSprites: Codable {
         case backShiny = "back_shiny"
         case other
     }
+    
+    init(frontDefault: String? = nil,
+         frontShiny: String? = nil,
+         backDefault: String? = nil,
+         backShiny: String? = nil,
+         other: PokemonSpritesOther? = nil) {
+        self.frontDefault = frontDefault
+        self.frontShiny = frontShiny
+        self.backDefault = backDefault
+        self.backShiny = backShiny
+        self.other = other
+    }
+    
+    func toDTO() -> PokemonSpritesDTO {
+        return PokemonSpritesDTO(
+            frontDefault: self.frontDefault,
+            frontShiny: self.frontShiny,
+            backDefault: self.backDefault,
+            backShiny: self.backShiny,
+            other: self.other?.toDTO() ?? PokemonSpritesOtherDTO(officialArtwork: OfficialArtworkDTO(frontDefault: "", frontShiny: ""))
+        )
+    }
+    
+    convenience init(from dto: PokemonSpritesDTO) {
+        self.init(frontDefault: dto.frontDefault,
+                  frontShiny: dto.frontShiny,
+                  backDefault: dto.backDefault,
+                  backShiny: dto.backShiny,
+                  other: PokemonSpritesOther(from: dto.other))
+    }
 }
 
-struct PokemonOtherSprites: Codable {
-    let officialArtwork: OfficialArtwork
-    let dreamWorld: DreamWorld?
-    let home: HomeSprites?
+@Model
+class PokemonSpritesOther {
+    @Attribute var officialArtwork: OfficialArtwork
     
     enum CodingKeys: String, CodingKey {
         case officialArtwork = "official-artwork"
-        case dreamWorld = "dream_world"
-        case home
     }
-}
-
-struct PokemonGameIndices: Codable {
-    let uuid: String = UUID().uuidString
-    let gameIndex: Int?
-    let version: NamedAPIResource
     
-    enum CodingKeys: String, CodingKey {
-        case gameIndex = "game_index"
-        case version
+    func toDTO() -> PokemonSpritesOtherDTO {
+        return PokemonSpritesOtherDTO(
+            officialArtwork: self.officialArtwork.toDTO()
+        )
+    }
+    
+    init(officialArtwork: OfficialArtwork? = nil) {
+        self.officialArtwork = officialArtwork ?? OfficialArtwork(frontDefault: "", frontShiny: "")
+    }
+    
+    convenience init(from dto: PokemonSpritesOtherDTO?) {
+        if let dto = dto {
+            self.init(officialArtwork: dto.officialArtwork != nil ? OfficialArtwork(from: dto.officialArtwork!) : nil)
+        } else {
+            self.init(officialArtwork: nil)
+        }
     }
 }
 
-struct OfficialArtwork: Codable {
-    let frontDefault: String?
-    let frontShiny: String?
-
+@Model
+class OfficialArtwork {
+    @Attribute var frontDefault: String?
+    @Attribute var frontShiny: String?
+    
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
         case frontShiny = "front_shiny"
     }
-}
-
-struct DreamWorld: Codable {
-    let frontDefault: String?
     
-    enum CodingKeys: String, CodingKey {
-        case frontDefault = "front_default"
+    func toDTO() -> OfficialArtworkDTO {
+        return OfficialArtworkDTO(
+            frontDefault: self.frontDefault ?? "",
+            frontShiny: self.frontShiny ?? ""
+        )
+    }
+    
+    init(frontDefault: String? = nil, frontShiny: String? = nil) {
+        self.frontDefault = frontDefault
+        self.frontShiny = frontShiny
+    }
+    
+    convenience init(from dto: OfficialArtworkDTO?) {
+        self.init(frontDefault: dto?.frontDefault, frontShiny: dto?.frontShiny)
     }
 }
 
-struct HomeSprites: Codable {
-    let frontDefault: String?
+
+@Model
+class PokemonSpecies {
+    @Attribute var url: String?
     
-    enum CodingKeys: String, CodingKey {
-        case frontDefault = "front_default"
+    func toDTO() -> PokemonSpeciesDTO {
+        return PokemonSpeciesDTO(
+            url: self.url ?? ""
+        )
+    }
+    
+    init(url: String) {
+        self.url = url
+    }
+    
+    convenience init(from dto: PokemonSpeciesDTO) {
+        self.init(url: dto.url)
     }
 }
 
-struct PokemonSpecies: Codable {
-    let url: String
+@Model
+class NamedAPIResource {
+    @Attribute var name: String?
+    @Attribute var url: String
+    
+    func toDTO() -> NamedAPIResourceDTO {
+        return NamedAPIResourceDTO(name: self.name ?? "", url: self.url)
+    }
+    
+    init(name: String,
+         url: String) {
+        self.name = name
+        self.url = url
+    }
+    
+    convenience init(from dto: NamedAPIResourceDTO) {
+        self.init(name: dto.name ?? "",
+                  url: dto.url ?? "")
+    }
 }
 
-struct PokemonCries: Codable {
-    let latest: String?
-}
-
-struct NamedAPIResource: Codable {
-    let name: String
-    let url: String
-}
-
-struct PokemonSpeciesData: Codable {
-    struct NamedAPIResource: Codable {
-        let name: String?
-        let url: String
-    }
+@Model
+class PokemonSpeciesData {
     
-    struct FlavorTextEntry: Codable {
-        let flavorText: String
-        let language: NamedAPIResource
-        let version: NamedAPIResource
-        
-        enum CodingKeys: String, CodingKey {
-            case flavorText = "flavor_text"
-            case language
-            case version
-        }
-    }
+    @Attribute var baseHappiness: Int
+    @Attribute var captureRate: Int
+    @Attribute var color: NamedAPIResource
+    @Attribute var eggGroups: [NamedAPIResource]
+    @Attribute var evolutionChain: NamedAPIResource
+    @Attribute var evolvesFromSpecies: NamedAPIResource?
+    @Attribute var flavorTextEntries: [FlavorTextEntry]
+    @Attribute var genderRate: Int
+    @Attribute var genera: [Genus]
+    @Attribute var generation: NamedAPIResource
+    @Attribute var growthRate: NamedAPIResource
+    @Attribute var habitat: NamedAPIResource?
+    @Attribute var hatchCounter: Int
+    @Attribute var id: Int
+    @Attribute var name: String
+    @Attribute var names: [Name]
     
-    struct Genus: Codable {
-        let genus: String
-        let language: NamedAPIResource
-    }
-    
-    struct Name: Codable {
-        let name: String
-        let language: NamedAPIResource
-    }
-    
-    struct Variety: Codable {
-        let isDefault: Bool
-        let pokemon: NamedAPIResource
-        
-        enum CodingKeys: String, CodingKey {
-            case isDefault = "is_default"
-            case pokemon
-        }
-    }
-    
-    let baseHappiness: Int
-    let captureRate: Int
-    let color: NamedAPIResource
-    let eggGroups: [NamedAPIResource]
-    let evolutionChain: NamedAPIResource
-    let evolvesFromSpecies: NamedAPIResource?
-    let flavorTextEntries: [FlavorTextEntry]
-    let formsSwitchable: Bool
-    let genderRate: Int
-    let genera: [Genus]
-    let generation: NamedAPIResource
-    let growthRate: NamedAPIResource
-    let habitat: NamedAPIResource?
-    let hasGenderDifferences: Bool
-    let hatchCounter: Int
-    let id: Int
-    let isBaby: Bool
-    let isLegendary: Bool
-    let isMythical: Bool
-    let name: String
-    let names: [Name]
-    let varieties: [Variety]
-
     enum CodingKeys: String, CodingKey {
         case baseHappiness = "base_happiness"
         case captureRate = "capture_rate"
@@ -192,21 +269,181 @@ struct PokemonSpeciesData: Codable {
         case evolutionChain = "evolution_chain"
         case evolvesFromSpecies = "evolves_from_species"
         case flavorTextEntries = "flavor_text_entries"
-        case formsSwitchable = "forms_switchable"
         case genderRate = "gender_rate"
         case genera
         case generation
-        case growthRate = "growth_rate"
-        case habitat
-        case hasGenderDifferences = "has_gender_differences"
-        case hatchCounter = "hatch_counter"
-        case id
-        case isBaby = "is_baby"
-        case isLegendary = "is_legendary"
-        case isMythical = "is_mythical"
-        case name
-        case names
-        case varieties
+    }
+    
+    init(
+        baseHappiness: Int,
+        captureRate: Int,
+        color: NamedAPIResource,
+        eggGroups: [NamedAPIResource],
+        evolutionChain: NamedAPIResource,
+        evolvesFromSpecies: NamedAPIResource? = nil,
+        flavorTextEntries: [FlavorTextEntry],
+        genderRate: Int,
+        genera: [Genus],
+        generation: NamedAPIResource,
+        growthRate: NamedAPIResource,
+        habitat: NamedAPIResource? = nil,
+        hatchCounter: Int,
+        id: Int,
+        name: String,
+        names: [Name]
+    ) {
+        self.baseHappiness = baseHappiness
+        self.captureRate = captureRate
+        self.color = color
+        self.eggGroups = eggGroups
+        self.evolutionChain = evolutionChain
+        self.evolvesFromSpecies = evolvesFromSpecies
+        self.flavorTextEntries = flavorTextEntries
+        self.genderRate = genderRate
+        self.genera = genera
+        self.generation = generation
+        self.growthRate = growthRate
+        self.habitat = habitat
+        self.hatchCounter = hatchCounter
+        self.id = id
+        self.name = name
+        self.names = names
+    }
+    
+    init(from dto: PokemonSpeciesDataDTO) {
+        self.baseHappiness = dto.baseHappiness
+        self.captureRate = dto.captureRate
+        self.color = NamedAPIResource(name: dto.color.name ?? "", url: dto.color.url ?? "")
+        self.eggGroups = dto.eggGroups.map { NamedAPIResource(name: $0.name ?? "", url: $0.url ?? "") }
+        self.evolutionChain = NamedAPIResource(name: dto.evolutionChain.name ?? "", url: dto.evolutionChain.url ?? "")
+        self.evolvesFromSpecies = dto.evolvesFromSpecies.map { NamedAPIResource(name: $0.name ?? "", url: $0.url ?? "") }
+        self.flavorTextEntries = dto.flavorTextEntries.map { FlavorTextEntry(from: $0) }
+        self.genderRate = dto.genderRate
+        self.genera = dto.genera.map { Genus(from: $0) }
+        self.generation = NamedAPIResource(name: dto.generation.name ?? "", url: dto.generation.url ?? "")
+        self.growthRate = NamedAPIResource(name: dto.growthRate.name ?? "", url: dto.growthRate.url ?? "")
+        self.habitat = dto.habitat.map { NamedAPIResource(name: $0.name ?? "", url: $0.url ?? "") }
+        self.hatchCounter = dto.hatchCounter
+        self.id = dto.id
+        self.name = dto.name
+        self.names = dto.names.map { Name(from: $0) }
+    }
+    
+    func toDTO() -> PokemonSpeciesDataDTO {
+        return PokemonSpeciesDataDTO(
+            baseHappiness: self.baseHappiness,
+            captureRate: self.captureRate,
+            color: self.color.toDTO(),
+            eggGroups: self.eggGroups.map { $0.toDTO() },
+            evolutionChain: self.evolutionChain.toDTO(),
+            evolvesFromSpecies: self.evolvesFromSpecies?.toDTO(),
+            flavorTextEntries: self.flavorTextEntries.map { $0.toDTO() },
+            genderRate: self.genderRate,
+            genera: self.genera.map { $0.toDTO() },
+            generation: self.generation.toDTO(),
+            growthRate: self.growthRate.toDTO(),
+            habitat: self.habitat?.toDTO(),
+            hatchCounter: self.hatchCounter,
+            id: self.id,
+            name: self.name,
+            names: self.names.map { $0.toDTO() }
+        )
+    }
+}
+
+@Model
+class Genus {
+    @Attribute var genus: String
+    @Attribute var language: NamedAPIResource
+    
+    // **Designated Initializer**
+    init(genus: String, language: NamedAPIResource) {
+        self.genus = genus
+        self.language = language
+    }
+    
+    // **Initializer from DTO**
+    init(from dto: GenusDTO) {
+        self.genus = dto.genus
+        self.language = NamedAPIResource(name: dto.language.name ?? "", url: dto.language.url ?? "")
+    }
+    
+    // **Convert Back to DTO**
+    func toDTO() -> GenusDTO {
+        return GenusDTO(genus: self.genus, language: self.language.toDTO())
+    }
+}
+
+@Model
+class Name {
+    @Attribute var name: String
+    @Attribute var language: NamedAPIResource
+    
+    // **Designated Initializer**
+    init(name: String, language: NamedAPIResource) {
+        self.name = name
+        self.language = language
+    }
+    
+    // **Initializer from DTO**
+    init(from dto: NameDTO) {
+        self.name = dto.name
+        self.language = NamedAPIResource(name: dto.language.name ?? "", url: dto.language.url ?? "")
+    }
+    
+    // **Convert Back to DTO**
+    func toDTO() -> NameDTO {
+        return NameDTO(name: self.name, language: self.language.toDTO())
+    }
+}
+
+@Model
+class FlavorTextEntry {
+    @Attribute var flavorText: String
+    @Attribute var language: NamedAPIResource
+    @Attribute var version: NamedAPIResource
+    
+    enum CodingKeys: String, CodingKey {
+        case flavorText = "flavor_text"
+        case language
+        case version
+    }
+
+    init(flavorText: String, language: NamedAPIResource, version: NamedAPIResource) {
+        self.flavorText = flavorText
+        self.language = language
+        self.version = version
+    }
+
+    init(from dto: FlavorTextEntryDTO) {
+        self.flavorText = dto.flavorText
+        self.language = NamedAPIResource(name: dto.language.name ?? "", url: dto.language.url ?? "")
+        self.version = NamedAPIResource(name: dto.version.name ?? "", url: dto.version.url ?? "")
+    }
+    
+    func toDTO() -> FlavorTextEntryDTO {
+        return FlavorTextEntryDTO(
+            flavorText: self.flavorText,
+            language: self.language.toDTO(),
+            version: self.version.toDTO()
+        )
+    }
+}
+
+// Add the conversion function to the PokemonData model
+extension PokemonData {
+    func toDTO() -> PokemonDataDTO {
+        return PokemonDataDTO(
+            id: self.id,
+            name: self.name,
+            height: self.height,
+            baseExperience: self.baseExperience,
+            order: self.order,
+            abilities: self.abilities.map { $0.toDTO() },
+            sprites: self.sprites.toDTO(),
+             species: self.species.toDTO(),
+             speciesData: self.speciesData?.toDTO()
+        )
     }
 }
 
