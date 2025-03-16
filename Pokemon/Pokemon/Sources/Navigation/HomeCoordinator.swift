@@ -11,6 +11,7 @@ import SwiftUI
 protocol HomeCoordinatorProtocol {
     func routeToHome()
     func routeToDetails(pokemon: Pokemon)
+    func routeToFavorites()
     func backToHome()
 }
 
@@ -19,7 +20,8 @@ final class HomeCoordinator: NavigationCoordinatable, HomeCoordinatorProtocol {
     
     @Root var home = makeHome
     @Route(.push) var details = makeDetails
-
+    @Route(.push) var favorites = makeFavorites
+    
     init() {
         self.stack = NavigationStack<HomeCoordinator>(initial: \.home)
     }
@@ -39,7 +41,15 @@ final class HomeCoordinator: NavigationCoordinatable, HomeCoordinatorProtocol {
     func routeToDetails(pokemon: Pokemon) {
         self.route(to: \.details, pokemon)
     }
+    
+    func makeFavorites() -> some View {
+        FavoritesView()
+    }
 
+    func routeToFavorites() {
+        self.route(to: \.favorites)
+    }
+    
     func backToHome() {
         self.popLast()
     }

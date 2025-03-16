@@ -1,16 +1,16 @@
 //
-//  HomeViewModel.swift
+//  FavoritesViewModel.swift
 //  Pokemon
 //
-//  Created by József Jagicza on 2025. 03. 13..
+//  Created by József Jagicza on 2025. 03. 17..
 //
 
 import Foundation
 import Combine
 
 @MainActor
-class HomeViewModel: ObservableObject {
-    @Published var pokemons: [Pokemon] = []
+class FavoritesViewModel: ObservableObject {
+    @Published var favorites: [Pokemon] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -36,18 +36,13 @@ class HomeViewModel: ObservableObject {
                     break
                 }
             }, receiveValue: { pokemons in
-                self.pokemons.append(contentsOf: pokemons)
-                self.isLoading = false                
+                self.favorites.append(contentsOf: pokemons)
+                self.isLoading = false
             })
             .store(in: &cancellables)
     }
     
-    func loadDetails(for pokemon: Pokemon) {
-        homeCoordinator.routeToDetails(pokemon: pokemon)
-    }
-    
-    func loadFavorites() {
-        homeCoordinator.routeToFavorites()
+    func backToHome() {
+        homeCoordinator.backToHome()
     }
 }
-
