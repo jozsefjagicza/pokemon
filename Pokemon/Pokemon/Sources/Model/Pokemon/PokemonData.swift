@@ -19,7 +19,8 @@ class PokemonData {
     @Attribute var sprites: PokemonSprites
     @Attribute var species: PokemonSpecies
     @Attribute var speciesData: PokemonSpeciesData?
-
+    @Attribute(.externalStorage) var image: Data?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -30,7 +31,7 @@ class PokemonData {
         case sprites
         case species
         case speciesData
-
+        case image
     }
     
     init(id: Int,
@@ -41,7 +42,8 @@ class PokemonData {
          abilities: [PokemonAbility],
          sprites: PokemonSprites,
          species: PokemonSpecies,
-         speciesData: PokemonSpeciesData?) {
+         speciesData: PokemonSpeciesData?,
+         image: Data?) {
         self.id = id
         self.name = name
         self.height = height
@@ -51,6 +53,7 @@ class PokemonData {
         self.sprites = sprites
         self.species = species
         self.speciesData = speciesData
+        self.image = image
     }
     
     convenience init(from dto: PokemonDataDTO) {
@@ -58,7 +61,8 @@ class PokemonData {
         let species = PokemonSpecies(from: dto.species)
         
         let speciesData = dto.speciesData != nil ? PokemonSpeciesData(from: dto.speciesData!) : nil
-
+        let image = dto.image
+        
         self.init(id: dto.id,
                   name: dto.name,
                   height: dto.height,
@@ -67,7 +71,23 @@ class PokemonData {
                   abilities: dto.abilities.map { PokemonAbility(from: $0) },
                   sprites: sprites,
                   species: species,
-                  speciesData: speciesData)
+                  speciesData: speciesData,
+                  image: image)
+    }
+    
+    func toDTO() -> PokemonDataDTO {
+        return PokemonDataDTO(
+            id: self.id,
+            name: self.name,
+            height: self.height,
+            baseExperience: self.baseExperience,
+            order: self.order,
+            abilities: self.abilities.map { $0.toDTO() },
+            sprites: self.sprites.toDTO(),
+            species: self.species.toDTO(),
+            speciesData: self.speciesData?.toDTO(),
+            image: self.image
+        )
     }
 }
 
@@ -408,13 +428,13 @@ class FlavorTextEntry {
         case language
         case version
     }
-
+    
     init(flavorText: String, language: NamedAPIResource, version: NamedAPIResource) {
         self.flavorText = flavorText
         self.language = language
         self.version = version
     }
-
+    
     init(from dto: FlavorTextEntryDTO) {
         self.flavorText = dto.flavorText
         self.language = NamedAPIResource(name: dto.language.name ?? "", url: dto.language.url ?? "")
@@ -426,23 +446,6 @@ class FlavorTextEntry {
             flavorText: self.flavorText,
             language: self.language.toDTO(),
             version: self.version.toDTO()
-        )
-    }
-}
-
-// Add the conversion function to the PokemonData model
-extension PokemonData {
-    func toDTO() -> PokemonDataDTO {
-        return PokemonDataDTO(
-            id: self.id,
-            name: self.name,
-            height: self.height,
-            baseExperience: self.baseExperience,
-            order: self.order,
-            abilities: self.abilities.map { $0.toDTO() },
-            sprites: self.sprites.toDTO(),
-             species: self.species.toDTO(),
-             speciesData: self.speciesData?.toDTO()
         )
     }
 }

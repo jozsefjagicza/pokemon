@@ -18,6 +18,7 @@ struct PokemonDataDTO: Codable {
     var sprites: PokemonSpritesDTO
     var species: PokemonSpeciesDTO
     var speciesData: PokemonSpeciesDataDTO?
+    var image: Data?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -29,7 +30,7 @@ struct PokemonDataDTO: Codable {
         case sprites
         case species
         case speciesData
-    
+        case image
     }
     
     init(id: Int,
@@ -40,7 +41,8 @@ struct PokemonDataDTO: Codable {
          abilities: [PokemonAbilityDTO],
          sprites: PokemonSpritesDTO,
          species: PokemonSpeciesDTO,
-         speciesData: PokemonSpeciesDataDTO?
+         speciesData: PokemonSpeciesDataDTO?,
+         image: Data?
         ) {
         self.id = id
         self.name = name
@@ -51,6 +53,7 @@ struct PokemonDataDTO: Codable {
         self.sprites = sprites
         self.species = species
         self.speciesData = speciesData
+        self.image = image
     }
 }
 

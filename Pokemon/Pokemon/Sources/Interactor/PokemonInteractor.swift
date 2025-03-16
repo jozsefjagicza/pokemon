@@ -16,10 +16,11 @@ protocol PokemonInteractorProtocol {
     func fetchPokemonDetails(for pokemonName: String) -> AnyPublisher<PokemonDataDTO, Error>
     func fetchSpeciesDetails(from urlString: String) -> AnyPublisher<PokemonSpeciesDataDTO, Error>
     func savePokemonDataToDatabase(_ pokemonData: PokemonData) async
+    func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never>
 }
 
 class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
-
+    
     func fetchPokemonDetails(for pokemonName: String) -> AnyPublisher<PokemonDataDTO, Error> {
         let urlString = "https://pokeapi.co/api/v2/pokemon/\(pokemonName)"
         guard let url = URL(string: urlString) else {
@@ -47,24 +48,22 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
     
     @MainActor
     func savePokemonDataToDatabase(_ pokemonData: PokemonData) {
-        print("FLAVOR: \(pokemonData.speciesData?.flavorTextEntries.first?.flavorText ?? "N/A")")
-
         let container: ModelContainer
-            do {
-                container = try ModelContainer(for: PokemonData.self)
-            } catch {
-                print("Nem sikerült betölteni a ModelContainer-t: \(error)")
-                return
-            }
-            
-            let context = container.mainContext
-
-            do {
-                context.insert(pokemonData)
-                try context.save()
-            } catch {
-                print("Hiba a lekérdezés vagy mentés során: \(error)")
-            }
+        do {
+            container = try ModelContainer(for: PokemonData.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return
+        }
+        
+        let context = container.mainContext
+        
+        do {
+            context.insert(pokemonData)
+            try context.save()
+        } catch {
+            print("Hiba a lekérdezés vagy mentés során: \(error)")
+        }
     }
     
     @MainActor
@@ -84,10 +83,9 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
             let fetchDescriptor = FetchDescriptor<PokemonData>(
                 predicate: #Predicate { $0.name == name }
             )
-
+            
             if let savedPokemon = try context.fetch(fetchDescriptor).first {
                 let pokemon = savedPokemon.toDTO()
-                print("Pokemon: \(name)")
                 return pokemon
             } else {
                 print("nincs ilyen pokémon")
@@ -97,6 +95,24 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
             print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
             return nil
         }
+    }
+    
+    func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never> {
+        Future { promise in
+            Task {
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    if let image = UIImage(data: data) {
+                        promise(.success(image))
+                    } else {
+                        promise(.success(nil))
+                    }
+                } catch {
+                    promise(.success(nil))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }
 

@@ -22,17 +22,17 @@ class PokemonDetailsViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let pokemon: Pokemon
-    
+
     init(pokemon: Pokemon) {
         self.pokemon = pokemon
     }
     
     func fetchDetails() {
         isLoading = true
-        //self.pokemonData = interactor.fetchPokemonDataByName(pokemon.name)
-        //isLoading = false
+        self.pokemonData = interactor.fetchPokemonDataByName(pokemon.name)
+        isLoading = false
 
-        
+        /*
         interactor.fetchPokemonDetails(for: pokemon.name)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
@@ -48,7 +48,7 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.fetchSpeciesDetails(from: data.species.url)
             })
             .store(in: &cancellables)
-         
+         */
     }
     
     private func fetchSpeciesDetails(from urlString: String) {
@@ -65,11 +65,24 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.pokemonData?.speciesData = speciesData
                 self.isLoading = false
                 if self.pokemonData != nil {
-                    Task {
-                        await self.interactor.savePokemonDataToDatabase(PokemonData(from: self.pokemonData!))
-                    }
+                    self.loadImageData(imageUrl: URL(string: self.pokemonData?.sprites.other.officialArtwork?.frontDefault ?? "")!)
                 }
             })
+            .store(in: &cancellables)
+    }
+    
+    private func loadImageData(imageUrl: URL) {
+        interactor.loadImage(from: imageUrl)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] image in
+                Task {
+                    guard let self = self, let pokemonData = self.pokemonData else { return }
+                    self.pokemonData?.image = image?.pngData()
+                    let data = PokemonData(from: pokemonData)
+                    data.image = image?.pngData()
+                    await self.interactor.savePokemonDataToDatabase(data)
+                }
+            }
             .store(in: &cancellables)
     }
     

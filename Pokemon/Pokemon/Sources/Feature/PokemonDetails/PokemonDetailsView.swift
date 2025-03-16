@@ -37,7 +37,16 @@ struct PokemonDetailsView: View {
             }
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+                    
                     if let pokemon = viewModel.pokemonData {
+                        if let imageData = viewModel.pokemonData?.image, let uiImage = UIImage(data: imageData) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFit()
+                                } else {
+                                    Text("Nem sikerült a kép betöltése")
+                                }
+                        /*
                         AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork?.frontDefault ?? "")) { image in
                             image.resizable().scaledToFit()
                                 .onTapGesture {
@@ -49,6 +58,7 @@ struct PokemonDetailsView: View {
                         } placeholder: {
                             ProgressView()
                         }
+                         */
                         HStack {
                             Spacer()
                             
