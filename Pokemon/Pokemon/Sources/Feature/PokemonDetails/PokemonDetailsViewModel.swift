@@ -30,13 +30,14 @@ class PokemonDetailsViewModel: ObservableObject {
     
     func fetchDetails() {
         isLoading = true
+        /*
         self.pokemonData = interactor.fetchPokemonDataByName(pokemonName)
         let isFavorite = self.checkIfPokemonIsFavorite()
         self.pokemonData?.isFavorite = isFavorite
         self.isFavorite = isFavorite
         isLoading = false
-
-        /*
+*/
+    
         interactor.fetchPokemonDetails(for: pokemonName)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
@@ -52,7 +53,7 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.fetchSpeciesDetails(from: data.species.url)
             })
             .store(in: &cancellables)
-         */
+         
     }
     
     private func fetchSpeciesDetails(from urlString: String) {

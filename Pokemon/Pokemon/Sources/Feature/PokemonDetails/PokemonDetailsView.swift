@@ -46,7 +46,9 @@ struct PokemonDetailsView: View {
                                     isShareSheetPresented = true
                                 }
                         } else {
-                            Text("Nem sikerült a kép betöltése")
+                            Image("pokemonBall")
+                                .resizable()
+                                .scaledToFit()
                         }
                         HStack {
                             Spacer()
