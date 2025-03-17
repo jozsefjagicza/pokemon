@@ -331,7 +331,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2E81AD0E2D81B22E00554D09 /* Debug */ = {
+		2E81AD0E2D81B22E00554D09 /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = 2E81ACEB2D81B22C00554D09 /* Pokemon */;
 			baseConfigurationReferenceRelativePath = ConfigFiles/DevConfig.xcconfig;
@@ -393,9 +393,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = Dev;
 		};
-		2E81AD0F2D81B22E00554D09 /* Release */ = {
+		2E81AD0F2D81B22E00554D09 /* Prod */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = 2E81ACEB2D81B22C00554D09 /* Pokemon */;
 			baseConfigurationReferenceRelativePath = ConfigFiles/ProdConfig.xcconfig;
@@ -449,12 +449,13 @@
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
-			name = Release;
+			name = Prod;
 		};
-		2E81AD112D81B22E00554D09 /* Debug */ = {
+		2E81AD112D81B22E00554D09 /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_dev;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				BASE_URL = "$(BASE_URL)";
 				CODE_SIGN_ENTITLEMENTS = Pokemon/Pokemon.entitlements;
@@ -491,12 +492,13 @@
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Debug;
+			name = Dev;
 		};
-		2E81AD122D81B22E00554D09 /* Release */ = {
+		2E81AD122D81B22E00554D09 /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_prod;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				BASE_URL = "$(BASE_URL)";
 				CODE_SIGN_ENTITLEMENTS = Pokemon/Pokemon.entitlements;
@@ -525,14 +527,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Release;
+			name = Prod;
 		};
-		2E81AD142D81B22E00554D09 /* Debug */ = {
+		2E81AD142D81B22E00554D09 /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -552,9 +555,9 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pokemon.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pokemon";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Debug;
+			name = Dev;
 		};
-		2E81AD152D81B22E00554D09 /* Release */ = {
+		2E81AD152D81B22E00554D09 /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -574,9 +577,9 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pokemon.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pokemon";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Release;
+			name = Prod;
 		};
-		2E81AD172D81B22E00554D09 /* Debug */ = {
+		2E81AD172D81B22E00554D09 /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -595,9 +598,9 @@
 				TEST_TARGET_NAME = Pokemon;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Debug;
+			name = Dev;
 		};
-		2E81AD182D81B22E00554D09 /* Release */ = {
+		2E81AD182D81B22E00554D09 /* Prod */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -616,7 +619,7 @@
 				TEST_TARGET_NAME = Pokemon;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
-			name = Release;
+			name = Prod;
 		};
 /* End XCBuildConfiguration section */
 
@@ -624,38 +627,38 @@
 		2E81ACE42D81B22C00554D09 /* Build configuration list for PBXProject "Pokemon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E81AD0E2D81B22E00554D09 /* Debug */,
-				2E81AD0F2D81B22E00554D09 /* Release */,
+				2E81AD0E2D81B22E00554D09 /* Dev */,
+				2E81AD0F2D81B22E00554D09 /* Prod */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Dev;
 		};
 		2E81AD102D81B22E00554D09 /* Build configuration list for PBXNativeTarget "Pokemon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E81AD112D81B22E00554D09 /* Debug */,
-				2E81AD122D81B22E00554D09 /* Release */,
+				2E81AD112D81B22E00554D09 /* Dev */,
+				2E81AD122D81B22E00554D09 /* Prod */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Dev;
 		};
 		2E81AD132D81B22E00554D09 /* Build configuration list for PBXNativeTarget "PokemonTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E81AD142D81B22E00554D09 /* Debug */,
-				2E81AD152D81B22E00554D09 /* Release */,
+				2E81AD142D81B22E00554D09 /* Dev */,
+				2E81AD152D81B22E00554D09 /* Prod */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Dev;
 		};
 		2E81AD162D81B22E00554D09 /* Build configuration list for PBXNativeTarget "PokemonUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2E81AD172D81B22E00554D09 /* Debug */,
-				2E81AD182D81B22E00554D09 /* Release */,
+				2E81AD172D81B22E00554D09 /* Dev */,
+				2E81AD182D81B22E00554D09 /* Prod */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Dev;
 		};
 /* End XCConfigurationList section */
 

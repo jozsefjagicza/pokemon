@@ -12,3 +12,5 @@ APP_NAME = Pokemon-Demo
 PRODUCT_BUNDLE_IDENTIFIER = com.pokemon.jagicza.dev
 
 BASE_URL = pokeapi.co
+
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon-Dev
