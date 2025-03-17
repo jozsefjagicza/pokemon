@@ -125,7 +125,8 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
         do {
             container = try ModelContainer(for: PokemonData.self)
         } catch {
-            throw PokemonError.modelContainerFailed(error)
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return []
         }
         
         let context = container.mainContext
@@ -136,12 +137,13 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
         
         do {
             let favoritePokemons = try context.fetch(fetchDescriptor)
-            return favoritePokemons.map { $0.toDTO() }
+            let pokemonDTOs = favoritePokemons.map { $0.toDTO() }
+            return pokemonDTOs
         } catch {
-            throw PokemonError.fetchFailed(error)
+            print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
+            return []
         }
     }
-
     
     @MainActor
     func updatePokemonFavoriteStatus(name: String, isFavorite: Bool) {

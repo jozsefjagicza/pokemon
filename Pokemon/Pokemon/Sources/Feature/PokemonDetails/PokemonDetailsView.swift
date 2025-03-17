@@ -172,6 +172,18 @@ struct PokemonDetailsView: View {
                 .cornerRadius(8)
             }
         }
+        .alert(isPresented: Binding<Bool>(
+            get: { viewModel.errorMessage != nil },
+            set: { _ in viewModel.dismissError() }
+        )) {
+            Alert(
+                title: Text("Hiba"),
+                message: Text(viewModel.errorMessage ?? "Ismeretlen hiba történt."),
+                dismissButton: .default(Text("OK"), action: {
+                    viewModel.dismissError()
+                })
+            )
+        }
     }
 }
 

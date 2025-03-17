@@ -122,5 +122,9 @@ class PokemonDetailsViewModel: ObservableObject {
     private func checkIfPokemonIsFavorite() -> Bool {
         return interactor.isPokemonFavorite(name: pokemonData?.name ?? "")
     }
+    
+    func dismissError() {
+        errorMessage = nil
+    }
 }
 
