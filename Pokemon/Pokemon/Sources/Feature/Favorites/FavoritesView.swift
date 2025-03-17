@@ -10,7 +10,8 @@ import SwiftData
 
 struct FavoritesView: View {
     @StateObject private var viewModel = FavoritesViewModel()
-    
+    @StateObject private var reachability = ReachabilityService()
+
     var body: some View {
         VStack {
             List {
@@ -46,6 +47,18 @@ struct FavoritesView: View {
                         .font(.title)
                         .foregroundColor(.black)
                 }
+            }
+            ToolbarItem(placement: .status) {
+                HStack {
+                    Image(systemName: reachability.isConnected ? "wifi" : "wifi.slash")
+                        .foregroundColor(reachability.isConnected ? .green : .red)
+                    Text(reachability.isConnected ? "Online" : "Offline")
+                        .font(.caption)
+                        .foregroundColor(reachability.isConnected ? .green : .red)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
             }
         }
         .navigationBarBackButtonHidden(true)

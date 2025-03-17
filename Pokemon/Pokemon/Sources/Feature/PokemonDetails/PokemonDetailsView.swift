@@ -11,7 +11,8 @@ import UIKit
 
 struct PokemonDetailsView: View {
     @StateObject private var viewModel: PokemonDetailsViewModel
-    
+    @StateObject private var reachability = ReachabilityService()
+
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
     
@@ -153,7 +154,20 @@ struct PokemonDetailsView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        
+        .toolbar {
+            ToolbarItem(placement: .status) {
+                HStack {
+                    Image(systemName: reachability.isConnected ? "wifi" : "wifi.slash")
+                        .foregroundColor(reachability.isConnected ? .green : .red)
+                    Text(reachability.isConnected ? "Online" : "Offline")
+                        .font(.caption)
+                        .foregroundColor(reachability.isConnected ? .green : .red)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+            }
+        }
     }
 }
 

@@ -12,36 +12,53 @@ struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
 
+    @StateObject private var reachability = ReachabilityService()
+
     var body: some View {
+        
         NavigationStack {
-            List {
-                ForEach(viewModel.pokemons, id: \.id) { pokemon in
-                    Button {
-                        viewModel.loadDetails(for: pokemon.name)
-                    } label: {
-                        Text(pokemon.name.capitalized)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .onAppear {
-                        if pokemon.id == viewModel.pokemons.last?.id {
-                            viewModel.fetchPokemons()
+            VStack {
+                List {
+                    ForEach(viewModel.pokemons, id: \.id) { pokemon in
+                        Button {
+                            viewModel.loadDetails(for: pokemon.name)
+                        } label: {
+                            Text(pokemon.name.capitalized)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .onAppear {
+                            if pokemon.id == viewModel.pokemons.last?.id {
+                                viewModel.fetchPokemons()
+                            }
                         }
                     }
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    }
                 }
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
+                .navigationTitle("Pokémon List")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            viewModel.loadFavorites()
+                        }) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                        }
+                    }
+                    ToolbarItem(placement: .status) {
+                        HStack {
+                            Image(systemName: reachability.isConnected ? "wifi" : "wifi.slash")
+                                .foregroundColor(reachability.isConnected ? .green : .red)
+                            Text(reachability.isConnected ? "Online" : "Offline")
+                                .font(.caption)
+                                .foregroundColor(reachability.isConnected ? .green : .red)
+                        }
                         .padding()
-                }
-            }
-            .navigationTitle("Pokémon List")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        viewModel.loadFavorites()
-                    }) {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
                     }
                 }
             }
