@@ -18,7 +18,18 @@ struct FavoritesView: View {
                     Button {
                         viewModel.loadDetails(for: pokemon)
                     } label: {
-                        Text(pokemon.name.capitalized)
+                        HStack {
+                            Text(pokemon.name.capitalized)
+                            Spacer()
+                            if let imageData = pokemon.image, let uiImage = UIImage(data: imageData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width:50, height: 50)
+                            } else {
+                                Text("Nem sikerült a kép betöltése")
+                            }
+                        }
                     }
                     .buttonStyle(PlainButtonStyle())
                 }

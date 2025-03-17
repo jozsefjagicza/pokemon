@@ -11,10 +11,10 @@ import UIKit
 
 struct PokemonDetailsView: View {
     @StateObject private var viewModel: PokemonDetailsViewModel
-        
+    
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
-        
+    
     init(pokemonName: String) {
         _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemonName: pokemonName))
     }
@@ -38,12 +38,16 @@ struct PokemonDetailsView: View {
                     
                     if let pokemon = viewModel.pokemonData {
                         if let imageData = viewModel.pokemonData?.image, let uiImage = UIImage(data: imageData) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFit()
-                                } else {
-                                    Text("Nem sikerült a kép betöltése")
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .onTapGesture {
+                                    imageToShare = uiImage
+                                    isShareSheetPresented = true
                                 }
+                        } else {
+                            Text("Nem sikerült a kép betöltése")
+                        }
                         HStack {
                             Spacer()
                             
@@ -76,7 +80,7 @@ struct PokemonDetailsView: View {
                                 Text("\(name.name.capitalized) (\(name.language.name?.capitalized ?? ""))")
                             }
                         }
-                    
+                        
                         VStack(alignment: .leading) {
                             Text("Basic Information:")
                                 .font(.headline)
@@ -84,7 +88,7 @@ struct PokemonDetailsView: View {
                             Text("Generation: \(pokemon.speciesData?.generation.name?.capitalized ?? "")")
                             Text("Color: \(pokemon.speciesData?.color.name?.capitalized ?? "")")
                         }
-                    
+                        
                         VStack(alignment: .leading) {
                             Text("Breeding Information:")
                                 .font(.headline)
@@ -128,35 +132,6 @@ struct PokemonDetailsView: View {
                                 Text(text.flavorText)
                             }
                         }
-
-                        GeometryReader { geometry in
-                            HStack {
-                                AsyncImage(url: URL(string: pokemon.sprites.frontDefault ?? "")) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(height: geometry.size.width / 4)
-                                AsyncImage(url: URL(string: pokemon.sprites.frontShiny ?? "")) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(height: geometry.size.width / 4)
-                                AsyncImage(url: URL(string: pokemon.sprites.backDefault ?? "")) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(height: geometry.size.width / 4)
-                                AsyncImage(url: URL(string: pokemon.sprites.backShiny ?? "")) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(height: geometry.size.width / 4)
-                            }
-                        }
                     } else if viewModel.isLoading {
                         ProgressView()
                     } else {
@@ -176,7 +151,7 @@ struct PokemonDetailsView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-            
+        
     }
 }
 
