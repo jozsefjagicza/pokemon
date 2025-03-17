@@ -18,12 +18,5 @@ extension View {
             .first
         keyWindow?.endEditing(true)
     }
-    
-    func favoriteToolbar(favoriteAction: @escaping (() -> Void)) -> some View {
-        self.modifier(FavoriteToolbarModifier(favoriteAction: favoriteAction))
-    }
-    
-    func statusToolbar(reachability: Binding<ReachabilityService>) -> some View {
-        self.modifier(StatusToolbarModifier(reachability: reachability))
-    }
 }
+

@@ -16,8 +16,8 @@ struct PokemonDetailsView: View {
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
     
-    init(pokemonName: String) {
-        _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemonName: pokemonName))
+    init(pokemonName: String, reachability: ReachabilityService = .init()) {
+        _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemonName: pokemonName, reachabilityService: reachability))
     }
     
     var body: some View {

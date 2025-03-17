@@ -14,46 +14,49 @@ import SwiftUI
 @MainActor
 class PokemonDetailsViewModel: ObservableObject {
     @Injected var homeCoordinator: HomeCoordinatorProtocol
+    @Injected var interactor: PokemonInteractorProtocol
+
     @Published var pokemonData: PokemonDataDTO?
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isFavorite: Bool = false
+    private let reachabilityService: ReachabilityService
 
-    @Injected var interactor: PokemonInteractorProtocol
-    
     private var cancellables = Set<AnyCancellable>()
     private let pokemonName: String
 
-    init(pokemonName: String) {
+    init(pokemonName: String, reachabilityService: ReachabilityService) {
         self.pokemonName = pokemonName
+        self.reachabilityService = reachabilityService
     }
     
     func fetchDetails() {
         isLoading = true
-        /*
-        self.pokemonData = interactor.fetchPokemonDataByName(pokemonName)
-        let isFavorite = self.checkIfPokemonIsFavorite()
-        self.pokemonData?.isFavorite = isFavorite
-        self.isFavorite = isFavorite
-        isLoading = false
-*/
-    
-        interactor.fetchPokemonDetails(for: pokemonName)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
-                    self.isLoading = false
-                case .finished:
-                    break
-                }
-            }, receiveValue: { data in
-                self.pokemonData = data
-                self.fetchSpeciesDetails(from: data.species.url)
-            })
-            .store(in: &cancellables)
-         
+
+        if reachabilityService.isConnected {
+            interactor.fetchPokemonDetails(for: pokemonName)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        self.errorMessage = error.localizedDescription
+                        self.isLoading = false
+                    case .finished:
+                        break
+                    }
+                }, receiveValue: { data in
+                    self.pokemonData = data
+                    self.fetchSpeciesDetails(from: data.species.url)
+                })
+                .store(in: &cancellables)
+        }
+        else {
+            self.pokemonData = interactor.fetchPokemonDataByName(pokemonName)
+            let isFavorite = self.checkIfPokemonIsFavorite()
+            self.pokemonData?.isFavorite = isFavorite
+            self.isFavorite = isFavorite
+            isLoading = false
+        }
     }
     
     private func fetchSpeciesDetails(from urlString: String) {

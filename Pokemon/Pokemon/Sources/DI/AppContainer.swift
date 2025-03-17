@@ -27,10 +27,10 @@ public final class AppContainer {
         .inObjectScope(.container)
         
         container.register(HomeCoordinatorProtocol.self) { resolver in
-                let mainCoordinator = resolver.resolve(MainCoordinator.self)!
-                return mainCoordinator.getHomeCoordinator()
-            }
-            .inObjectScope(.container)
+            let mainCoordinator = resolver.resolve(MainCoordinator.self)!
+            return mainCoordinator.getHomeCoordinator()
+        }
+        .inObjectScope(.container)
         
         container.register(SessionManagerType.self) { _ in
             SessionManager()
