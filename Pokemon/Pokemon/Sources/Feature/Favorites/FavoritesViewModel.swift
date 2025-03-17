@@ -10,36 +10,24 @@ import Combine
 
 @MainActor
 class FavoritesViewModel: ObservableObject {
-    @Published var favorites: [Pokemon] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @Published var favoritePokemons: [PokemonDataDTO] = []
+    @Published var errorMessage: String? = nil
     
-    private var cancellables = Set<AnyCancellable>()
-    @Injected var interactor: HomeInteractorProtocol
+    private var cancellables: Set<AnyCancellable> = []
+    
+    @Injected var interactor: PokemonInteractorProtocol
     @Injected var homeCoordinator: HomeCoordinatorProtocol
-
-    init() {
-        self.fetchPokemons()
+    
+    func loadFavoritePokemons() {
+        
+        self.favoritePokemons = interactor.fetchFavoritePokemonData()
+        print(favoritePokemons.count)
+        
     }
     
-    func fetchPokemons() {
-        isLoading = true
-        
-        interactor.fetchPokemons()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
-                    self.isLoading = false
-                case .finished:
-                    break
-                }
-            }, receiveValue: { pokemons in
-                self.favorites.append(contentsOf: pokemons)
-                self.isLoading = false
-            })
-            .store(in: &cancellables)
+    func loadDetails(for pokemon: PokemonDataDTO) {
+        let pokemon = Pokemon(id: pokemon.id, name: pokemon.name, url: pokemon.url ?? "")
+        homeCoordinator.routeToDetails(pokemon: pokemon)
     }
     
     func backToHome() {

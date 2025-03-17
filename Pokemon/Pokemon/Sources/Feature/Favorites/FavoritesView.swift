@@ -13,7 +13,16 @@ struct FavoritesView: View {
     
     var body: some View {
         VStack {
-            
+            List {
+                ForEach(viewModel.favoritePokemons, id: \.id) { pokemon in
+                    Button {
+                        viewModel.loadDetails(for: pokemon)
+                    } label: {
+                        Text(pokemon.name.capitalized)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
             Spacer()
         }
         .navigationTitle("Favorites")
@@ -29,6 +38,9 @@ struct FavoritesView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            viewModel.loadFavoritePokemons()
+        }
     }
 }
 

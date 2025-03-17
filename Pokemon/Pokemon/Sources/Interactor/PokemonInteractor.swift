@@ -17,6 +17,10 @@ protocol PokemonInteractorProtocol {
     func fetchSpeciesDetails(from urlString: String) -> AnyPublisher<PokemonSpeciesDataDTO, Error>
     func savePokemonDataToDatabase(_ pokemonData: PokemonData) async
     func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never>
+    func fetchFavoritePokemonData() -> [PokemonDataDTO]
+    func updatePokemonFavoriteStatus(name: String, isFavorite: Bool)
+    func isPokemonSaved(name: String) -> Bool
+    func isPokemonFavorite(name: String) -> Bool
 }
 
 class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
@@ -113,6 +117,108 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    @MainActor
+    func fetchFavoritePokemonData() -> [PokemonDataDTO] {
+        
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: PokemonData.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return []
+        }
+        
+        let context = container.mainContext
+        
+        let fetchDescriptor = FetchDescriptor<PokemonData>(
+            predicate: #Predicate { $0.isFavorite == true }
+        )
+        
+        do {
+            let favoritePokemons = try context.fetch(fetchDescriptor)
+            let pokemonDTOs = favoritePokemons.map { $0.toDTO() }
+            return pokemonDTOs
+        } catch {
+            print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
+            return []
+        }
+    }
+    
+    @MainActor
+    func updatePokemonFavoriteStatus(name: String, isFavorite: Bool) {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: PokemonData.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return
+        }
+        
+        let context = container.mainContext
+        let fetchDescriptor = FetchDescriptor<PokemonData>(predicate: #Predicate { $0.name == name })
+
+        do {
+            if let pokemonData = try context.fetch(fetchDescriptor).first {
+                pokemonData.isFavorite = isFavorite
+                try context.save()
+            } else {
+                print("Nem található Pokémon az adott azonosítóval.")
+            }
+        } catch {
+            print("Hiba történt az adatmódosítás során: \(error)")
+        }
+    }
+    
+    @MainActor
+    func isPokemonSaved(name: String) -> Bool {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: PokemonData.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return false
+        }
+        
+        let context = container.mainContext
+        
+        let fetchDescriptor = FetchDescriptor<PokemonData>(
+            predicate: #Predicate { $0.name == name }
+        )
+        
+        do {
+            let results = try context.fetch(fetchDescriptor)
+            return !results.isEmpty
+        } catch {
+            print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
+            return false
+        }
+    }
+
+    @MainActor
+    func isPokemonFavorite(name: String) -> Bool {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: PokemonData.self)
+        } catch {
+            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
+            return false
+        }
+        
+        let context = container.mainContext
+        
+        let fetchDescriptor = FetchDescriptor<PokemonData>(
+            predicate: #Predicate { $0.name == name && $0.isFavorite == true }
+        )
+        
+        do {
+            let results = try context.fetch(fetchDescriptor)
+            return !results.isEmpty
+        } catch {
+            print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
+            return false
+        }
     }
 }
 

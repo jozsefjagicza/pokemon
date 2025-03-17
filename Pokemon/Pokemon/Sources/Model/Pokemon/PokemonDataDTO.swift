@@ -10,6 +10,7 @@ import SwiftData
 
 struct PokemonDataDTO: Codable {
     var id: Int
+    var url: String?
     var name: String
     var height: Int
     var baseExperience: Int
@@ -19,9 +20,11 @@ struct PokemonDataDTO: Codable {
     var species: PokemonSpeciesDTO
     var speciesData: PokemonSpeciesDataDTO?
     var image: Data?
+    var isFavorite: Bool?
     
     enum CodingKeys: String, CodingKey {
         case id
+        case url
         case name
         case height
         case baseExperience = "base_experience"
@@ -31,9 +34,11 @@ struct PokemonDataDTO: Codable {
         case species
         case speciesData
         case image
+        case isFavorite
     }
     
     init(id: Int,
+         url: String?,
          name: String,
          height: Int,
          baseExperience: Int,
@@ -42,9 +47,11 @@ struct PokemonDataDTO: Codable {
          sprites: PokemonSpritesDTO,
          species: PokemonSpeciesDTO,
          speciesData: PokemonSpeciesDataDTO?,
-         image: Data?
+         image: Data?,
+         isFavorite: Bool?
         ) {
         self.id = id
+        self.url = url
         self.name = name
         self.height = height
         self.baseExperience = baseExperience
@@ -54,6 +61,7 @@ struct PokemonDataDTO: Codable {
         self.species = species
         self.speciesData = speciesData
         self.image = image
+        self.isFavorite = isFavorite
     }
 }
 

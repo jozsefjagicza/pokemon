@@ -14,9 +14,7 @@ struct PokemonDetailsView: View {
         
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
-    
-    @State private var isFavorite: Bool = false
-    
+        
     init(pokemon: Pokemon) {
         _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemon: pokemon))
     }
@@ -63,9 +61,10 @@ struct PokemonDetailsView: View {
                             Spacer()
                             
                             Button(action: {
-                                isFavorite.toggle()
+                                viewModel.isFavorite.toggle()
+                                viewModel.toggleFavoriteStatus()
                             }) {
-                                Image(systemName: isFavorite ? "star.fill" : "star")
+                                Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
                                     .font(.title)
                                     .foregroundColor(.red)
                             }

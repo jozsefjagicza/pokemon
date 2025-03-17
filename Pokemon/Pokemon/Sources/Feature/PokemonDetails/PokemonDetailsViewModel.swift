@@ -17,7 +17,8 @@ class PokemonDetailsViewModel: ObservableObject {
     @Published var pokemonData: PokemonDataDTO?
     @Published var isLoading = false
     @Published var errorMessage: String?
-    
+    @Published var isFavorite: Bool = false
+
     @Injected var interactor: PokemonInteractorProtocol
     
     private var cancellables = Set<AnyCancellable>()
@@ -29,10 +30,10 @@ class PokemonDetailsViewModel: ObservableObject {
     
     func fetchDetails() {
         isLoading = true
-        self.pokemonData = interactor.fetchPokemonDataByName(pokemon.name)
-        isLoading = false
+        //self.pokemonData = interactor.fetchPokemonDataByName(pokemon.name)
+        //isLoading = false
 
-        /*
+        
         interactor.fetchPokemonDetails(for: pokemon.name)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
@@ -48,7 +49,7 @@ class PokemonDetailsViewModel: ObservableObject {
                 self.fetchSpeciesDetails(from: data.species.url)
             })
             .store(in: &cancellables)
-         */
+         
     }
     
     private func fetchSpeciesDetails(from urlString: String) {
@@ -78,8 +79,12 @@ class PokemonDetailsViewModel: ObservableObject {
                 Task {
                     guard let self = self, let pokemonData = self.pokemonData else { return }
                     self.pokemonData?.image = image?.pngData()
+                    let isFavorite = self.checkIfPokemonIsFavorite()
+                    self.pokemonData?.isFavorite = isFavorite
+                    self.isFavorite = isFavorite
                     let data = PokemonData(from: pokemonData)
                     data.image = image?.pngData()
+                    data.url = self.pokemon.url
                     await self.interactor.savePokemonDataToDatabase(data)
                 }
             }
@@ -101,6 +106,15 @@ class PokemonDetailsViewModel: ObservableObject {
         UIGraphicsEndImageContext()
         
         return uiImage
+    }
+    
+    @MainActor
+    func toggleFavoriteStatus() {
+        interactor.updatePokemonFavoriteStatus(name: pokemonData?.name ?? "", isFavorite: isFavorite)
+    }
+    
+    private func checkIfPokemonIsFavorite() -> Bool {
+        return interactor.isPokemonFavorite(name: pokemonData?.name ?? "")
     }
 }
 

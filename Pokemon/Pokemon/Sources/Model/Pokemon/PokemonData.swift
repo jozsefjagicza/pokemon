@@ -11,6 +11,7 @@ import SwiftData
 @Model
 class PokemonData {
     @Attribute var id: Int
+    @Attribute var url: String?
     @Attribute var name: String
     @Attribute var height: Int
     @Attribute var baseExperience: Int
@@ -20,9 +21,11 @@ class PokemonData {
     @Attribute var species: PokemonSpecies
     @Attribute var speciesData: PokemonSpeciesData?
     @Attribute(.externalStorage) var image: Data?
+    @Attribute var isFavorite: Bool?
     
     enum CodingKeys: String, CodingKey {
         case id
+        case url
         case name
         case height
         case baseExperience = "base_experience"
@@ -32,9 +35,11 @@ class PokemonData {
         case species
         case speciesData
         case image
+        case isFavorite
     }
     
     init(id: Int,
+         url: String?,
          name: String,
          height: Int,
          baseExperience: Int,
@@ -43,8 +48,10 @@ class PokemonData {
          sprites: PokemonSprites,
          species: PokemonSpecies,
          speciesData: PokemonSpeciesData?,
-         image: Data?) {
+         image: Data?,
+         isFavorite: Bool?) {
         self.id = id
+        self.url = url
         self.name = name
         self.height = height
         self.baseExperience = baseExperience
@@ -54,6 +61,7 @@ class PokemonData {
         self.species = species
         self.speciesData = speciesData
         self.image = image
+        self.isFavorite = isFavorite
     }
     
     convenience init(from dto: PokemonDataDTO) {
@@ -64,6 +72,7 @@ class PokemonData {
         let image = dto.image
         
         self.init(id: dto.id,
+                  url: dto.url,
                   name: dto.name,
                   height: dto.height,
                   baseExperience: dto.baseExperience,
@@ -72,12 +81,14 @@ class PokemonData {
                   sprites: sprites,
                   species: species,
                   speciesData: speciesData,
-                  image: image)
+                  image: image,
+                  isFavorite: dto.isFavorite)
     }
     
     func toDTO() -> PokemonDataDTO {
         return PokemonDataDTO(
             id: self.id,
+            url: self.url,
             name: self.name,
             height: self.height,
             baseExperience: self.baseExperience,
@@ -86,7 +97,8 @@ class PokemonData {
             sprites: self.sprites.toDTO(),
             species: self.species.toDTO(),
             speciesData: self.speciesData?.toDTO(),
-            image: self.image
+            image: self.image,
+            isFavorite: self.isFavorite
         )
     }
 }
