@@ -42,8 +42,8 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func loadDetails(for pokemon: Pokemon) {
-        homeCoordinator.routeToDetails(pokemon: pokemon)
+    func loadDetails(for pokemonName: String) {
+        homeCoordinator.routeToDetails(pokemonName: pokemonName)
     }
     
     func loadFavorites() {

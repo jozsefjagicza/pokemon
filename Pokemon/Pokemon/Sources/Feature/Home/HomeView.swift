@@ -17,7 +17,7 @@ struct HomeView: View {
             List {
                 ForEach(viewModel.pokemons, id: \.id) { pokemon in
                     Button {
-                        viewModel.loadDetails(for: pokemon)
+                        viewModel.loadDetails(for: pokemon.name)
                     } label: {
                         Text(pokemon.name.capitalized)
                     }

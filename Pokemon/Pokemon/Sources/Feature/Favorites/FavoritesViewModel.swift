@@ -26,8 +26,7 @@ class FavoritesViewModel: ObservableObject {
     }
     
     func loadDetails(for pokemon: PokemonDataDTO) {
-        let pokemon = Pokemon(id: pokemon.id, name: pokemon.name, url: pokemon.url ?? "")
-        homeCoordinator.routeToDetails(pokemon: pokemon)
+        homeCoordinator.routeToDetails(pokemonName: pokemon.name)
     }
     
     func backToHome() {

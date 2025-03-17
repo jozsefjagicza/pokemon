@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol HomeCoordinatorProtocol {
     func routeToHome()
-    func routeToDetails(pokemon: Pokemon)
+    func routeToDetails(pokemonName: String)
     func routeToFavorites()
     func backToHome()
 }
@@ -30,16 +30,16 @@ final class HomeCoordinator: NavigationCoordinatable, HomeCoordinatorProtocol {
         HomeView()
     }
 
-    func makeDetails(pokemon: Pokemon) -> some View {
-        PokemonDetailsView(pokemon: pokemon)
+    func makeDetails(pokemonName: String) -> some View {
+        PokemonDetailsView(pokemonName: pokemonName)
     }
 
     func routeToHome() {
         self.root(\.home)
     }
 
-    func routeToDetails(pokemon: Pokemon) {
-        self.route(to: \.details, pokemon)
+    func routeToDetails(pokemonName: String) {
+        self.route(to: \.details, pokemonName)
     }
     
     func makeFavorites() -> some View {

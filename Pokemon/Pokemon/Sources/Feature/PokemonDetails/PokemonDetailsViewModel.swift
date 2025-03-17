@@ -22,10 +22,10 @@ class PokemonDetailsViewModel: ObservableObject {
     @Injected var interactor: PokemonInteractorProtocol
     
     private var cancellables = Set<AnyCancellable>()
-    private let pokemon: Pokemon
+    private let pokemonName: String
 
-    init(pokemon: Pokemon) {
-        self.pokemon = pokemon
+    init(pokemonName: String) {
+        self.pokemonName = pokemonName
     }
     
     func fetchDetails() {
@@ -34,7 +34,7 @@ class PokemonDetailsViewModel: ObservableObject {
         //isLoading = false
 
         
-        interactor.fetchPokemonDetails(for: pokemon.name)
+        interactor.fetchPokemonDetails(for: pokemonName)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -84,7 +84,6 @@ class PokemonDetailsViewModel: ObservableObject {
                     self.isFavorite = isFavorite
                     let data = PokemonData(from: pokemonData)
                     data.image = image?.pngData()
-                    data.url = self.pokemon.url
                     await self.interactor.savePokemonDataToDatabase(data)
                 }
             }
