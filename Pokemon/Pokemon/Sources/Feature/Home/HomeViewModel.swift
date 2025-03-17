@@ -27,7 +27,8 @@ class HomeViewModel: ObservableObject {
         
         interactor.fetchPokemons()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self = self else { return }
                 switch completion {
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
@@ -35,9 +36,10 @@ class HomeViewModel: ObservableObject {
                 case .finished:
                     break
                 }
-            }, receiveValue: { pokemons in
+            }, receiveValue: { [weak self] pokemons in
+                guard let self = self else { return }
                 self.pokemons.append(contentsOf: pokemons)
-                self.isLoading = false                
+                self.isLoading = false
             })
             .store(in: &cancellables)
     }
@@ -48,6 +50,10 @@ class HomeViewModel: ObservableObject {
     
     func loadFavorites() {
         homeCoordinator.routeToFavorites()
+    }
+    
+    func dismissError() {
+        errorMessage = nil
     }
 }
 

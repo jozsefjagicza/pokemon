@@ -11,9 +11,9 @@ import Stinsen
 struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
-
+    
     @StateObject private var reachability = ReachabilityService()
-
+    
     var body: some View {
         
         NavigationStack {
@@ -62,6 +62,18 @@ struct HomeView: View {
                     }
                 }
             }
+        }
+        .alert(isPresented: Binding<Bool>(
+            get: { viewModel.errorMessage != nil },
+            set: { _ in viewModel.dismissError() }
+        )) {
+            Alert(
+                title: Text("Hiba"),
+                message: Text(viewModel.errorMessage ?? "Ismeretlen hiba történt."),
+                dismissButton: .default(Text("OK"), action: {
+                    viewModel.dismissError()
+                })
+            )
         }
     }
 }
