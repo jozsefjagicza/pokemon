@@ -14,6 +14,10 @@ struct FavoritesView: View {
 
     var body: some View {
         VStack {
+            if viewModel.favoritePokemons.isEmpty {
+                Text("No favorites yet!")
+                    .padding(.top, 50)
+            }
             List {
                 ForEach(viewModel.favoritePokemons, id: \.id) { pokemon in
                     Button {
