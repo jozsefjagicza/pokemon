@@ -11,18 +11,23 @@ import Combine
 @MainActor
 class FavoritesViewModel: ObservableObject {
     @Published var favoritePokemons: [PokemonDataDTO] = []
-    @Published var errorMessage: String? = nil
     
+    @Published var showingErrorAlert: Bool = false
+    @Published var alertMessage: String = ""
+
     private var cancellables: Set<AnyCancellable> = []
     
     @Injected var interactor: PokemonInteractorProtocol
     @Injected var homeCoordinator: HomeCoordinatorProtocol
     
     func loadFavoritePokemons() {
-        
-        self.favoritePokemons = interactor.fetchFavoritePokemonData()
-        print(favoritePokemons.count)
-        
+        do {
+            self.favoritePokemons = try interactor.fetchFavoritePokemonData()
+        } catch let error as PokemonError {
+            showError(error.localizedDescription)
+        } catch {
+            showError("Ismeretlen hiba történt: \(error.localizedDescription)")
+        }
     }
     
     func loadDetails(for pokemon: PokemonDataDTO) {
@@ -32,4 +37,11 @@ class FavoritesViewModel: ObservableObject {
     func backToHome() {
         homeCoordinator.backToHome()
     }
+    
+    private func showError(_ message: String) {
+        alertMessage = message
+        showingErrorAlert = true
+    }
 }
+
+

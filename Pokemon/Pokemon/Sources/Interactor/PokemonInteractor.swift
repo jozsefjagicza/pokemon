@@ -17,7 +17,7 @@ protocol PokemonInteractorProtocol {
     func fetchSpeciesDetails(from urlString: String) -> AnyPublisher<PokemonSpeciesDataDTO, Error>
     func savePokemonDataToDatabase(_ pokemonData: PokemonData) async
     func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never>
-    func fetchFavoritePokemonData() -> [PokemonDataDTO]
+    func fetchFavoritePokemonData() throws -> [PokemonDataDTO]
     func updatePokemonFavoriteStatus(name: String, isFavorite: Bool)
     func isPokemonSaved(name: String) -> Bool
     func isPokemonFavorite(name: String) -> Bool
@@ -119,14 +119,13 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
     }
     
     @MainActor
-    func fetchFavoritePokemonData() -> [PokemonDataDTO] {
+    func fetchFavoritePokemonData() throws -> [PokemonDataDTO] {
         
         let container: ModelContainer
         do {
             container = try ModelContainer(for: PokemonData.self)
         } catch {
-            print("Nem sikerült betölteni a ModelContainer-t: \(error)")
-            return []
+            throw PokemonError.modelContainerFailed(error)
         }
         
         let context = container.mainContext
@@ -137,13 +136,12 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
         
         do {
             let favoritePokemons = try context.fetch(fetchDescriptor)
-            let pokemonDTOs = favoritePokemons.map { $0.toDTO() }
-            return pokemonDTOs
+            return favoritePokemons.map { $0.toDTO() }
         } catch {
-            print("Hiba a Pokémon adatainak lekérdezése során: \(error)")
-            return []
+            throw PokemonError.fetchFailed(error)
         }
     }
+
     
     @MainActor
     func updatePokemonFavoriteStatus(name: String, isFavorite: Bool) {

@@ -65,6 +65,11 @@ struct FavoritesView: View {
         .onAppear {
             viewModel.loadFavoritePokemons()
         }
+        .alert("Hiba", isPresented: $viewModel.showingErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.alertMessage)
+        }
     }
 }
 
