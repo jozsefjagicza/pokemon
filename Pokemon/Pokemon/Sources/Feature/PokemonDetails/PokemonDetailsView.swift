@@ -47,9 +47,13 @@ struct PokemonDetailsView: View {
                                     isShareSheetPresented = true
                                 }
                         } else {
-                            Image("pokemonBall")
-                                .resizable()
-                                .scaledToFit()
+                            HStack {
+                                Spacer()
+                                Image("pokemonBall")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                Spacer()
+                            }
                         }
                         HStack {
                             Spacer()
