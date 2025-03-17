@@ -44,19 +44,6 @@ struct PokemonDetailsView: View {
                                 } else {
                                     Text("Nem sikerült a kép betöltése")
                                 }
-                        /*
-                        AsyncImage(url: URL(string: pokemon.sprites.other.officialArtwork?.frontDefault ?? "")) { image in
-                            image.resizable().scaledToFit()
-                                .onTapGesture {
-                                    if let uiImage = viewModel.convertToUIImage(image) {
-                                        imageToShare = uiImage
-                                        isShareSheetPresented = true
-                                    }
-                                }
-                        } placeholder: {
-                            ProgressView()
-                        }
-                         */
                         HStack {
                             Spacer()
                             
