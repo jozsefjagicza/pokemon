@@ -1,0 +1,14 @@
+//
+//  ProdConfig.xcconfig
+//  Pokemon
+//
+//  Created by József Jagicza on 2025. 03. 17..
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+APP_NAME = Pokemon
+PRODUCT_BUNDLE_IDENTIFIER = com.pokemon.jagicza.prod
+
+BASE_URL = pokeapi.co

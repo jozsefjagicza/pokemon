@@ -26,7 +26,7 @@ protocol PokemonInteractorProtocol {
 class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
     
     func fetchPokemonDetails(for pokemonName: String) -> AnyPublisher<PokemonDataDTO, Error> {
-        let urlString = "https://pokeapi.co/api/v2/pokemon/\(pokemonName)"
+        let urlString = "\(Config.baseURL)\(pokemonName)"
         guard let url = URL(string: urlString) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
@@ -92,7 +92,6 @@ class PokemonInteractor: @preconcurrency PokemonInteractorProtocol {
                 let pokemon = savedPokemon.toDTO()
                 return pokemon
             } else {
-                print("nincs ilyen pokémon")
                 return nil
             }
         } catch {

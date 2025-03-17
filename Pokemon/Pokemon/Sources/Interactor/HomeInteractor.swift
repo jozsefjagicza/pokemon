@@ -16,9 +16,10 @@ protocol HomeInteractorProtocol {
 
 class HomeInteractor: HomeInteractorProtocol {
     
-    var nextPageURL: String = "https://pokeapi.co/api/v2/pokemon/"
+    var nextPageURL: String = Config.baseURL
     
     func fetchPokemons() -> AnyPublisher<[Pokemon], Error> {
+        print(nextPageURL)
         guard let url = URL(string: nextPageURL) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
@@ -35,10 +36,6 @@ class HomeInteractor: HomeInteractorProtocol {
                 }
                 let pokemons = value.results.map { Pokemon(from: $0) }
                 self.nextPageURL = value.next ?? ""
-                
-                Task {
-                    //await self.savePokemonsToDatabase(pokemons)
-                }
                 
                 return pokemons
             }

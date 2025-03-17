@@ -17,6 +17,8 @@ struct Config {
     static let buildVersionNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
             
     static let osVersion = UIDevice.current.systemVersion
+    
+    static var baseURL = "https://\((Bundle.main.object(forInfoDictionaryKey: "BASE_URL") ?? ""))/api/v2/pokemon/"
 }
 
 
