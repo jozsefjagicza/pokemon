@@ -64,7 +64,8 @@ final class MainCoordinator: NavigationCoordinatable, MainCoordinatorProtocol {
                 case .loggedIn:
                     self?.root(\.authenticated)
                 case .loggedOut:
-                    self?.root(\.unauthenticated)
+                    //self?.root(\.unauthenticated)
+                    self?.root(\.authenticated)
                 }
             }
             .store(in: &cancellables)
