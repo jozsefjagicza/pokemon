@@ -4,8 +4,5 @@
 <dict>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
-    
-    <key>CFBundleDisplayName</key>
-    <string>$(APP_NAME)</string>
 </dict>
 </plist>
