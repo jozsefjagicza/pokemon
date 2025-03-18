@@ -15,6 +15,7 @@ struct PokemonDetailsView: View {
 
     @State private var isShareSheetPresented = false
     @State private var imageToShare: UIImage?
+    @State private var urlString: String?
     
     init(pokemonName: String, reachability: ReachabilityService = .init()) {
         _viewModel = StateObject(wrappedValue: PokemonDetailsViewModel(pokemonName: pokemonName, reachabilityService: reachability))
@@ -151,8 +152,8 @@ struct PokemonDetailsView: View {
                     viewModel.fetchDetails()
                 }
                 .sheet(isPresented: $isShareSheetPresented) {
-                    if let imageToShare = imageToShare {
-                        ShareSheet(items: [imageToShare])
+                    if let imageURL = URL(string: viewModel.pokemonData?.sprites.other.officialArtwork?.frontDefault ?? "") {
+                        ShareSheet(items: [imageURL], subject: viewModel.pokemonData?.name ?? "")
                     }
                 }
             }
@@ -189,12 +190,14 @@ struct PokemonDetailsView: View {
 
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
-    
+    let subject: String
+
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        return UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        activityViewController.setValue(subject, forKey: "subject")
+        
+        return activityViewController
     }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
-        // Nem szükséges frissíteni a megosztás képernyőt
-    }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
+
